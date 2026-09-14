@@ -380,6 +380,36 @@
   .copy-btn.copied{background:var(--amber);}
   .copy-btn svg{width:14px;height:14px;}
 
+  .msg-fields{padding:12px 15px; border-bottom:1px solid var(--line); background:rgba(87,225,196,.03);}
+  .msg-fields-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:9px;}
+  .msg-fields-head span{font-family:'JetBrains Mono',monospace; font-size:9.5px; letter-spacing:.04em; color:var(--text-faint);}
+  .msg-fields-clear{
+    background:none; border:none; cursor:pointer;
+    font-family:'JetBrains Mono',monospace; font-size:9.5px;
+    color:var(--text-faint); text-decoration:underline; text-underline-offset:2px;
+    padding:2px;
+  }
+  .msg-fields-clear:hover{color:var(--accent);}
+  .msg-fields-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:8px;}
+  .msg-field{display:flex; flex-direction:column; gap:4px;}
+  .msg-field label{font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.02em;}
+  .msg-field input{
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 10px;
+    font-size:12.5px;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    outline:none;
+    transition:border-color .15s;
+    min-width:0;
+  }
+  .msg-field input:focus{border-color:var(--accent);}
+  .msg-field input::placeholder{color:var(--text-faint); opacity:.6;}
+  .msg-body .ph-filled{color:var(--accent); font-weight:600; background:var(--accent-dim); padding:0 3px; border-radius:3px;}
+  .msg-body .ph-empty{color:var(--text-faint); border-bottom:1px dashed var(--text-faint);}
+
   /* ---------- Bottom nav ---------- */
   .tabbar{
     position:fixed;
@@ -2814,9 +2844,58 @@ function updateProgress(group){
   if(pctLbl) pctLbl.textContent = pct + '%';
 }
 
+function extractPlaceholders(body){
+  const seen = new Set();
+  const result = [];
+  const re = /\[([^\]]+)\]/g;
+  let m;
+  while((m = re.exec(body))){
+    if(!seen.has(m[1])){ seen.add(m[1]); result.push(m[1]); }
+  }
+  return result;
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderMsgPreview(body, values){
+  values = values || {};
+  return escapeHtml(body).replace(/\[([^\]]+)\]/g, (whole, ph) => {
+    const val = (values[ph] || '').trim();
+    return val ? `<span class="ph-filled">${escapeHtml(val)}</span>` : `<span class="ph-empty">${whole}</span>`;
+  });
+}
+
+function fillMsgPlainText(body, values){
+  values = values || {};
+  return body.replace(/\[([^\]]+)\]/g, (whole, ph) => {
+    const val = (values[ph] || '').trim();
+    return val ? val : whole;
+  });
+}
+
 function renderMessages(){
   const el = document.getElementById('list-messages');
-  el.innerHTML = messages.map((m,i) => `
+  const savedValues = loadState().msgFields || {};
+  el.innerHTML = messages.map((m,i) => {
+    const placeholders = extractPlaceholders(m.body);
+    const fieldsHtml = placeholders.length ? `
+      <div class="msg-fields">
+        <div class="msg-fields-head">
+          <span>FILL IN YOUR DETAILS</span>
+          <button type="button" class="msg-fields-clear" onclick="clearMessageFields()">Clear all</button>
+        </div>
+        <div class="msg-fields-grid">
+          ${placeholders.map(ph => `
+            <div class="msg-field">
+              <label>${escapeHtml(ph)}</label>
+              <input type="text" class="msg-input" data-ph="${escapeHtml(ph)}" placeholder="${escapeHtml(ph)}" value="${escapeHtml(savedValues[ph] || '')}">
+            </div>
+          `).join('')}
+        </div>
+      </div>` : '';
+    return `
     <div class="msg-card">
       <div class="msg-head">
         <div>
@@ -2824,7 +2903,8 @@ function renderMessages(){
           <div class="msg-sub">${m.sub}</div>
         </div>
       </div>
-      <div class="msg-body" id="msg-body-${i}">${m.body}</div>
+      ${fieldsHtml}
+      <div class="msg-body" id="msg-body-${i}">${renderMsgPreview(m.body, savedValues)}</div>
       <div class="msg-foot">
         <button class="copy-btn" onclick="copyMessage(this, ${i})">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
@@ -2832,11 +2912,41 @@ function renderMessages(){
         </button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
+
+  el.querySelectorAll('.msg-input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const ph = inp.dataset.ph;
+      const state = loadState();
+      const msgFields = state.msgFields || {};
+      msgFields[ph] = inp.value;
+      saveState({msgFields});
+      syncMessageField(ph, inp.value, msgFields);
+    });
+  });
+}
+
+function syncMessageField(ph, value, values){
+  document.querySelectorAll('.msg-input').forEach(inp => {
+    if(inp.dataset.ph === ph && inp.value !== value) inp.value = value;
+  });
+  messages.forEach((m, idx) => {
+    if(m.body.indexOf('[' + ph + ']') !== -1){
+      const bodyEl = document.getElementById('msg-body-' + idx);
+      if(bodyEl) bodyEl.innerHTML = renderMsgPreview(m.body, values);
+    }
+  });
+}
+
+function clearMessageFields(){
+  saveState({msgFields: {}});
+  renderMessages();
 }
 
 function copyMessage(btn, i){
-  const text = messages[i].body;
+  const values = loadState().msgFields || {};
+  const text = fillMsgPlainText(messages[i].body, values);
   copyToClipboard(text).then(() => {
     const span = btn.querySelector('span');
     const original = span.textContent;
