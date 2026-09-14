@@ -420,6 +420,38 @@
   .done-toggle svg{width:13px;height:13px;}
 
   ::selection{background:var(--accent-dim); color:var(--text);}
+
+  /* ---------- Tablet / Desktop: frame the app as a floating card ---------- */
+  @media (min-width: 640px){
+    body{
+      align-items:flex-start;
+      padding:40px 20px;
+      background:radial-gradient(1100px 560px at 50% -8%, #131b29 0%, var(--bg) 55%);
+    }
+    .app{
+      max-width:560px;
+      min-height:calc(100vh - 80px);
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:0 40px 100px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.04) inset;
+      margin-bottom:40px;
+    }
+    .topbar{border-radius:28px 28px 0 0;}
+    .tabbar{max-width:560px; border-radius:0 0 28px 28px; border-left:1px solid var(--line); border-right:1px solid var(--line);}
+    .pill-scroll{flex-wrap:wrap;}
+    .stat-row{gap:12px;}
+  }
+
+  /* ---------- Pointer devices: hover feedback (skipped on touch) ---------- */
+  @media (hover:hover) and (pointer:fine){
+    .tab-btn:hover{color:var(--text);}
+    .tab-btn.active:hover{color:var(--accent);}
+    .pill:hover{border-color:var(--accent); color:var(--text);}
+    .pill.active:hover{color:var(--accent);}
+    .qa-q:hover{background:var(--surface-2);}
+    .card:hover{border-color:#2c3a52;}
+    .msg-card:hover{border-color:#2c3a52;}
+  }
 </style>
 </head>
 <body>
