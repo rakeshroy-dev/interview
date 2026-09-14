@@ -1,0 +1,2755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Rakesh Roy — Interview Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E14;
+    --bg-elev:#0E1420;
+    --surface:#141B27;
+    --surface-2:#1B2432;
+    --surface-3:#212B3B;
+    --line:#243044;
+    --text:#E9EEF5;
+    --text-dim:#93A1B5;
+    --text-faint:#5B6879;
+    --accent:#57E1C4;
+    --accent-dim:#57E1C433;
+    --amber:#F5B85B;
+    --coral:#FF8F76;
+    --violet:#B79CFF;
+    --radius:14px;
+    --tab-h:64px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+  }
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+
+  .app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    background:linear-gradient(180deg,var(--bg-elev) 0%, var(--bg) 220px);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:20;
+    padding:22px 20px 16px;
+    background:linear-gradient(180deg, var(--bg-elev) 70%, transparent);
+    backdrop-filter:blur(6px);
+  }
+  .topbar .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--accent);
+    letter-spacing:.02em;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  .topbar .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+  .topbar h1{
+    font-size:22px;
+    margin:0;
+    font-weight:800;
+    letter-spacing:-0.01em;
+  }
+  .topbar p{
+    margin:4px 0 0;
+    color:var(--text-dim);
+    font-size:13.5px;
+  }
+
+  /* ---------- Content ---------- */
+  .screen{display:none; padding:4px 20px calc(var(--tab-h) + 28px); flex:1;}
+  .screen.active{display:block; animation:fadein .25s ease;}
+  @keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);}}
+
+  .section-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    margin:22px 0 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .section-label::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 16px;
+    margin-bottom:10px;
+  }
+  .card ul{margin:0; padding-left:18px;}
+  .card li{margin-bottom:7px; font-size:13.5px; line-height:1.55; color:var(--text-dim);}
+  .card li strong{color:var(--text);}
+  .card h4{
+    margin:0 0 8px; font-size:13px; color:var(--text);
+    display:flex; align-items:center; gap:6px;
+  }
+  .stat-row{display:flex; gap:10px; margin-bottom:4px;}
+  .stat{
+    flex:1;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 12px;
+    text-align:left;
+  }
+  .stat .num{font-family:'JetBrains Mono',monospace; font-size:17px; font-weight:700; color:var(--accent);}
+  .stat .lbl{font-size:10.8px; color:var(--text-dim); margin-top:2px;}
+
+  .chip-row{display:flex; flex-wrap:wrap; gap:7px; margin-top:2px;}
+  .chip{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--text-dim);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    padding:5px 10px;
+    border-radius:20px;
+  }
+
+  /* ---------- Pills / segmented control ---------- */
+  .pill-scroll{
+    display:flex; gap:8px; overflow-x:auto; padding:2px 0 12px;
+    scrollbar-width:none;
+  }
+  .pill-scroll::-webkit-scrollbar{display:none;}
+  .pill{
+    flex:0 0 auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    padding:8px 14px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    color:var(--text-dim);
+    cursor:pointer;
+    white-space:nowrap;
+    transition:.15s;
+  }
+  .pill.active{
+    background:var(--accent-dim);
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+
+  /* ---------- Intro version tabs ---------- */
+  .seg{
+    display:flex;
+    background:var(--surface-2);
+    border-radius:12px;
+    padding:4px;
+    margin-bottom:12px;
+    gap:4px;
+  }
+  .seg button{
+    flex:1;
+    border:none;
+    background:transparent;
+    color:var(--text-dim);
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    padding:9px 4px;
+    border-radius:9px;
+    cursor:pointer;
+  }
+  .seg button.active{background:var(--surface-3); color:var(--text); font-weight:600;}
+
+  .intro-text{
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--text);
+  }
+  .intro-text .hl{color:var(--accent);}
+
+  .keypoints{
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px dashed var(--line);
+  }
+  .keypoints .kp-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--text-faint);
+    margin-bottom:6px;
+  }
+
+  .copy-btn-mini{
+    display:flex; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--text-dim);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    padding:7px 11px;
+    border-radius:9px;
+    cursor:pointer;
+    margin-top:12px;
+    width:fit-content;
+    transition:.15s;
+  }
+  .copy-btn-mini:hover{border-color:var(--accent); color:var(--accent);}
+  .copy-btn-mini svg{width:13px;height:13px;}
+
+  /* ---------- Accordion (Q&A) ---------- */
+  .qa-item{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:9px;
+    overflow:hidden;
+  }
+  .qa-q{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+    padding:14px 15px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .qa-q .qtext{font-size:14px; font-weight:600; line-height:1.42;}
+  .qa-q .qnum{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--text-faint);
+    margin-bottom:3px;
+    display:block;
+  }
+  .lvl{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    padding:1px 6px;
+    border-radius:4px;
+    margin-left:6px;
+    vertical-align:1px;
+    font-weight:700;
+  }
+  .lvl-adv{background:var(--violet); color:#1A1230;}
+  .qa-chevron{
+    flex:0 0 auto;
+    width:20px;height:20px;
+    color:var(--text-faint);
+    transition:transform .2s;
+    margin-top:2px;
+  }
+  .qa-item.open .qa-chevron{transform:rotate(180deg); color:var(--accent);}
+  .qa-a{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s ease;
+  }
+  .qa-item.open .qa-a{max-height:3000px;}
+  .qa-a-inner{
+    padding:0 15px 16px;
+    font-size:13.5px;
+    line-height:1.55;
+    color:var(--text-dim);
+    border-top:1px solid var(--line);
+    padding-top:12px;
+  }
+  .qa-a-inner strong{color:var(--text);}
+  .qa-a-inner ul{margin:6px 0 10px; padding-left:18px;}
+  .qa-a-inner ul ul{margin:5px 0 5px; padding-left:16px;}
+  .qa-a-inner li{margin-bottom:6px;}
+  .qa-a-inner p{margin:0 0 10px;}
+  .star{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:.03em;
+    color:var(--bg);
+    background:var(--accent);
+    padding:2px 7px;
+    border-radius:5px;
+    margin-right:6px;
+    font-weight:700;
+  }
+  .tag-sit{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--bg);
+    background:var(--coral);
+    padding:2px 7px;
+    border-radius:5px;
+    margin-right:6px;
+    font-weight:700;
+  }
+  .tag-sys{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    color:var(--bg);
+    background:var(--violet);
+    padding:2px 7px;
+    border-radius:5px;
+    margin-right:6px;
+    font-weight:700;
+  }
+  pre{
+    background:#0B1019;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 13px;
+    overflow-x:auto;
+    font-size:12px;
+    line-height:1.5;
+    margin:8px 0 12px;
+  }
+  code{font-family:'JetBrains Mono',monospace; color:#D7E3F0;}
+  pre .kw{color:var(--amber);}
+  pre .cm{color:var(--text-faint); font-style:italic;}
+
+  /* ---------- Message cards ---------- */
+  .msg-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .msg-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 15px;
+    border-bottom:1px solid var(--line);
+    background:var(--surface-2);
+  }
+  .msg-head .msg-title{font-size:13.5px; font-weight:700;}
+  .msg-head .msg-sub{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--text-faint); margin-top:2px;}
+  .msg-body{
+    padding:14px 15px;
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--text-dim);
+    white-space:pre-wrap;
+  }
+  .msg-foot{padding:0 15px 15px;}
+  .copy-btn{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px; font-weight:600;
+    color:var(--bg);
+    background:var(--accent);
+    border:none;
+    padding:9px 14px;
+    border-radius:9px;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .copy-btn.copied{background:var(--amber);}
+  .copy-btn svg{width:14px;height:14px;}
+
+  /* ---------- Bottom nav ---------- */
+  .tabbar{
+    position:fixed;
+    bottom:0; left:50%; transform:translateX(-50%);
+    width:100%; max-width:480px;
+    height:var(--tab-h);
+    background:rgba(14,20,32,.92);
+    backdrop-filter:blur(14px);
+    border-top:1px solid var(--line);
+    display:flex;
+    z-index:30;
+  }
+  .tab-btn{
+    flex:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:4px;
+    background:none; border:none;
+    color:var(--text-faint);
+    cursor:pointer;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+  }
+  .tab-btn svg{width:19px; height:19px;}
+  .tab-btn.active{color:var(--accent);}
+  .tab-btn .ind{width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0;margin-top:-2px;}
+  .tab-btn.active .ind{opacity:1;}
+
+  .progress-wrap{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .progress-track{
+    flex:1; height:5px; background:var(--surface-2); border-radius:4px; overflow:hidden;
+  }
+  .progress-fill{height:100%; background:var(--accent); border-radius:4px; transition:width .3s;}
+  .progress-pct{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-faint); flex:0 0 auto;}
+
+  .done-toggle{
+    flex:0 0 auto; width:22px; height:22px; border-radius:6px;
+    border:1.5px solid var(--line); margin-top:2px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:transparent;
+  }
+  .done-toggle.checked{background:var(--accent); border-color:var(--accent); color:var(--bg);}
+  .done-toggle svg{width:13px;height:13px;}
+
+  ::selection{background:var(--accent-dim); color:var(--text);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="eyebrow"><span class="dot"></span><span id="topEyebrow">INTERVIEW PREP · RAKESH ROY</span></div>
+    <h1 id="topTitle">Ready when you are</h1>
+    <p id="topSub">Python / Django Backend Engineer — everything you need in one place.</p>
+  </div>
+
+  <!-- ================= HOME ================= -->
+  <div class="screen active" id="screen-home">
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">5+ yrs</div><div class="lbl">Backend experience</div></div>
+      <div class="stat"><div class="num">48+</div><div class="lbl">Client orgs served</div></div>
+      <div class="stat"><div class="num">3</div><div class="lbl">Shipped projects</div></div>
+    </div>
+
+    <div class="section-label">SELF INTRODUCTION</div>
+    <div class="card">
+      <div class="seg" id="introSeg">
+        <button class="active" data-v="30">30 sec</button>
+        <button data-v="60">1 min</button>
+        <button data-v="120">2 min</button>
+      </div>
+      <div class="intro-text" id="introText"></div>
+      <div class="keypoints">
+        <div class="kp-label">KEY POINTS TO HIT (memorize these, not the script)</div>
+        <ul id="introKeypoints"></ul>
+      </div>
+      <div class="copy-btn-mini" onclick="copyText(this, plainIntroText())">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        <span>Copy this version</span>
+      </div>
+    </div>
+
+    <div class="section-label">RESUME SNAPSHOT</div>
+    <div class="card">
+      <div class="chip-row">
+        <span class="chip">Django</span><span class="chip">DRF</span><span class="chip">MySQL</span>
+        <span class="chip">Redis</span><span class="chip">Celery</span><span class="chip">Django Channels</span>
+        <span class="chip">FastAPI</span><span class="chip">AWS EC2/S3</span><span class="chip">Docker</span>
+        <span class="chip">CI/CD</span><span class="chip">Pandas</span><span class="chip">NumPy</span>
+        <span class="chip">React.js</span><span class="chip">Git</span><span class="chip">JWT/OAuth</span>
+      </div>
+    </div>
+
+    <div class="section-label">QUESTIONS TO ASK THE INTERVIEWER</div>
+    <div class="card">
+      <h4>About the role</h4>
+      <ul>
+        <li>What does success look like in this role at the 3-month and 12-month mark?</li>
+        <li>What's the biggest backend/technical challenge the team is dealing with right now?</li>
+        <li>What does the on-call or production-incident process look like here?</li>
+      </ul>
+      <h4 style="margin-top:12px;">About the team & engineering culture</h4>
+      <ul>
+        <li>How are technical decisions made — RFCs, tech lead call, team consensus?</li>
+        <li>What does the code review and release process look like end to end?</li>
+        <li>How much of the stack is legacy vs actively being re-architected?</li>
+      </ul>
+      <h4 style="margin-top:12px;">About growth</h4>
+      <ul>
+        <li>What does the path from this role to senior/staff look like on this team?</li>
+        <li>How is performance measured and reviewed here?</li>
+      </ul>
+    </div>
+
+    <div class="section-label">DAY-BEFORE CHECKLIST</div>
+    <div class="card">
+      <ul>
+        <li>Re-read the job description and map 3 resume bullets to it directly.</li>
+        <li>Skim the company's engineering blog / recent news for one talking point.</li>
+        <li>Re-run through the Resume Deep-Dive tab — assume they will probe specifics.</li>
+        <li>Have 2 strong project stories ready that aren't payroll (breadth signal): the chat app and the ticketing system.</li>
+        <li>Prepare your own 2–3 questions from the list above, picked for this specific company.</li>
+        <li>Test your mic/camera 10 minutes early for virtual rounds.</li>
+      </ul>
+    </div>
+
+    <div class="section-label">COMMON MISTAKES TO AVOID</div>
+    <div class="card">
+      <ul>
+        <li>Don't answer "tell me about yourself" with a full resume walkthrough — hit the arc, not every line.</li>
+        <li>Don't say "we" for something you personally built — be precise about your individual contribution.</li>
+        <li>Don't leave a technical answer at theory — always land on how you've actually used it.</li>
+        <li>Don't guess on a technical question — say what you'd check/verify instead of inventing an answer.</li>
+        <li>Don't skip asking questions at the end — it signals genuine interest.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ================= BEHAVIORAL ================= -->
+  <div class="screen" id="screen-behavioral">
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-behavioral" style="width:0%"></div></div>
+      <div class="progress-pct" id="progress-behavioral-pct">0%</div>
+    </div>
+    <div id="list-behavioral"></div>
+  </div>
+
+  <!-- ================= SITUATIONAL ================= -->
+  <div class="screen" id="screen-situational">
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-situational" style="width:0%"></div></div>
+      <div class="progress-pct" id="progress-situational-pct">0%</div>
+    </div>
+    <div id="list-situational"></div>
+  </div>
+
+  <!-- ================= MESSAGES ================= -->
+  <div class="screen" id="screen-messages">
+    <div id="list-messages"></div>
+  </div>
+
+  <!-- ================= TECHNICAL ================= -->
+  <div class="screen" id="screen-technical">
+    <div class="pill-scroll" id="techPills"></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progress-technical" style="width:0%"></div></div>
+      <div class="progress-pct" id="progress-technical-pct">0%</div>
+    </div>
+    <div id="list-technical"></div>
+  </div>
+
+  <div class="tabbar">
+    <button class="tab-btn active" data-screen="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      Home<span class="ind"></span>
+    </button>
+    <button class="tab-btn" data-screen="behavioral">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      Behavioral<span class="ind"></span>
+    </button>
+    <button class="tab-btn" data-screen="situational">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Situational<span class="ind"></span>
+    </button>
+    <button class="tab-btn" data-screen="messages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+      Messages<span class="ind"></span>
+    </button>
+    <button class="tab-btn" data-screen="technical">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
+      Technical<span class="ind"></span>
+    </button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+
+const introVersions = {
+  30: `Hi, I'm <span class="hl">Rakesh Roy</span>, a Python and Django backend engineer with <span class="hl">5+ years</span> of experience building enterprise HRMS and SaaS platforms. At Medicover Hospitals, I've been a core contributor to a multi-tenant HRMS used by <span class="hl">48+ client organizations</span> — covering payroll, attendance, and real-time features built with Django Channels and Celery. I enjoy solving backend problems around data integrity, performance, and scale, and that's exactly the kind of work I'm looking to take on next.`,
+
+  60: `Hi, I'm Rakesh Roy, a Python/Django backend engineer based in Hyderabad with over 5 years of experience. I started at Medicover Hospitals as a Software Associate building core HRMS modules — attendance, leave, and payroll — and grew into a Python/Django Developer role where I now own large parts of a multi-tenant HRMS platform serving 48+ client organizations, including RTC.
+
+My day-to-day work spans Django REST Framework APIs, MySQL query optimization with Redis caching, Celery-based scheduled reporting pipelines, and real-time features using Django Channels and WebSockets for in-app chat and notifications. I've also worked hands-on with AWS EC2/S3 and Docker for deployment, integrated the Payphi payment gateway for transaction processing, and built Streamlit dashboards with Plotly/Chart.js for payroll and HR analytics.
+
+Outside my core stack I've picked up FastAPI and explored a Rasa-based HR chatbot proof of concept. I'm looking for a role where I can keep working on backend systems at scale — ideally with more ownership over architecture and performance.`,
+
+  120: `Hi, I'm Rakesh Roy, a Python/Django backend engineer based in Hyderabad with 5+ years of experience building enterprise-grade HR and payroll systems.
+
+I joined Medicover Hospitals in 2021 as a Software Associate, building core HRMS modules — attendance tracking, leave management, and payroll processing — using Django and Django REST Framework, along with authentication, serialization, and Swagger documentation. Within a year I moved into a Python/Django Developer role, where I've since become a core contributor to our multi-tenant HRMS platform, which today serves 48+ client organizations including RTC, covering recruitment, onboarding, attendance, TDS-enabled payroll, asset tracking, and performance appraisals.
+
+Some of the work I'm proudest of: building a Celery- and Redis-based scheduled reporting pipeline that generates and delivers payroll and HR reports on a daily/weekly/monthly/quarterly cadence; adding a real-time chat and notification layer using Django Channels and WebSockets for internal HRMS communication; and optimizing MySQL queries with Redis caching to cut response times under load. I've also built a QR-code-based patient token and counter management system, and experimented with a Rasa-based HR chatbot as a learning project.
+
+On the infrastructure side, I've worked with AWS EC2 and S3 for deployment, Docker and CI/CD pipelines to streamline releases, and Nginx/Gunicorn in production. I hold a Master's in Computer Science from BBCIT, along with certifications in Python and Django.
+
+What I'm looking for next is a role where I can keep growing as a backend engineer — more ownership over system architecture, and the chance to work on problems around scale, data integrity, and performance, which is what I enjoy most about this work.`
+};
+
+const introKeypoints = {
+  30: ["5+ years, Python/Django", "Multi-tenant HRMS, 48+ clients", "Django Channels + Celery for real-time & reporting", "Interested in: data integrity, performance, scale"],
+  60: ["Career arc: Software Associate → Python/Django Developer", "Core stack: DRF, MySQL, Redis, Celery, Django Channels", "Infra: AWS EC2/S3, Docker; Payphi payment integration", "Extras: FastAPI, Streamlit dashboards, Rasa POC", "Closing line: looking for more scale + ownership"],
+  120: ["Career arc with dates: Jul 2021 → present", "48+ client orgs incl. RTC; recruitment → payroll → appraisals", "3 concrete wins: reporting pipeline, real-time chat layer, MySQL+Redis optimization", "Side projects: QR token system, Rasa POC", "Infra: AWS, Docker, CI/CD, Nginx/Gunicorn", "Education: MSc CS (BBCIT) + Python/Django certifications", "Closing line: architecture ownership + scale problems"]
+};
+
+function plainIntroText(){
+  return document.getElementById('introText').innerText;
+}
+
+/* ---- Behavioral: STAR answers rendered as bullet structure ---- */
+const behavioralQA = [
+{q:"Tell me about yourself.",a:`<ul>
+<li>Use the Home tab self-intro as your base script — pick the 30-sec or 1-min version depending on time given.</li>
+<li>Structure: career arc → current scope/scale → 1–2 concrete wins → what you want next.</li>
+<li>Tailor the closing line to the specific company/role instead of a generic close.</li>
+<li>Avoid reciting the resume line by line — the interviewer already has it.</li>
+</ul>`},
+{q:"Why are you looking for a new opportunity?",a:`<ul>
+<li>Frame around growth, never dissatisfaction or blame.</li>
+<li>Anchor in something concrete you've already solved, to show you're leaving from strength, not escaping a problem.</li>
+</ul>
+<strong>Sample answer</strong>
+<ul>
+<li>"I've grown a lot at Medicover — from building core HRMS modules to now owning parts of a platform used by 48+ client organizations."</li>
+<li>"I'm at a point where I've solved most of the recurring problems in our current stack."</li>
+<li>"I'm looking for a role with more architectural ownership and exposure to different scale challenges — that's what drew me to this role."</li>
+</ul>`},
+{q:"Walk me through your day-to-day work.",a:`<ul>
+<li>New DRF endpoints for client-specific HR workflows</li>
+<li>Celery jobs for scheduled payroll/HR reports</li>
+<li>Debugging data issues reported by a client's HR team, often tracing through MySQL directly</li>
+<li>Django Channels work on the chat/notification layer</li>
+<li>PR reviews for teammates and occasional architecture discussions</li>
+</ul>`},
+{q:"Describe your most challenging project.",a:`<span class="star">STAR</span>Mid-year payroll grade-structure change.
+<ul>
+<li><strong>Situation:</strong> Employee pay grade was stored as a live, mutable field on <code>CustomUser</code>. A grade got renamed ("General" → "General New") mid-year, and every historical payslip, report, and TDS calculation that referenced the old grade broke.</li>
+<li><strong>Task:</strong> Fix payroll, reporting, and TDS declaration views so historical data stayed accurate — without a disruptive schema migration during an active payroll cycle.</li>
+<li><strong>Action:</strong>
+  <ul>
+    <li>Redesigned grade resolution to derive grade dynamically from <code>ComponentsMaster</code> via FK traversal on the underlying "Values" tables, instead of trusting the live field.</li>
+    <li>Wrote shared helpers — <code>get_grade_aware_component_totals</code>, <code>get_grade_aware_monthly_field</code>, <code>get_bulk_grade_aware_component_totals</code> — in a central <code>pay_utils.py</code>.</li>
+    <li>Rewrote the affected report builder, template tags, and TDS declaration views to use the new helpers.</li>
+  </ul>
+</li>
+<li><strong>Result:</strong> Historical payslips and tax calculations became grade-accurate again with zero schema changes or backfill risk, and the helpers are now reused anywhere grade-aware totals are needed.</li>
+</ul>`},
+{q:"Tell me about a time you improved performance.",a:`<span class="star">STAR</span>
+<ul>
+<li><strong>Situation:</strong> Payroll/HR report pages were slow for larger client organizations as data volume grew.</li>
+<li><strong>Task:</strong> Reduce response time without changing report output.</li>
+<li><strong>Action:</strong>
+  <ul>
+    <li>Profiled slow MySQL queries and added missing indexes.</li>
+    <li>Added <code>select_related</code>/<code>prefetch_related</code> to cut N+1 queries.</li>
+    <li>Introduced Redis caching for data that didn't need recomputation on every request.</li>
+  </ul>
+</li>
+<li><strong>Result:</strong> Noticeably faster page loads and lower server load during month-end payroll runs.</li>
+</ul>`},
+{q:"Tell me about a bug that was difficult to track down.",a:`<ul>
+<li>Reuse the grade-rename story — but focus on the diagnosis, not the fix.</li>
+<li>Payslip totals for past months were suddenly wrong, but only for one grade.</li>
+<li>Traced it: report builder → payroll views → root cause: <code>CustomUser.grade</code> had literally been overwritten when the grade was renamed.</li>
+<li>Once the root cause was clear — a live field being trusted for historical data — the fix (deriving grade from historical relationships) was straightforward.</li>
+</ul>`},
+{q:"How do you approach code you didn't write (legacy code)?",a:`<ul>
+<li>Read the tests and actual data flow first — don't assume behavior from naming.</li>
+<li>Example: inheriting the ticketing module's status/comment-visibility logic —</li>
+<li style="margin-left:14px;">mapped existing queryset annotations</li>
+<li style="margin-left:14px;">found where N+1 queries were creeping in</li>
+<li style="margin-left:14px;">made small, independently verifiable changes rather than a rewrite</li>
+</ul>`},
+{q:"How do you handle tight deadlines?",a:`<ul>
+<li>Break work down early; flag risk as soon as it's visible, not at the deadline.</li>
+<li>Prioritize whatever blocks the hard date (payroll cutoffs are non-negotiable); defer polish.</li>
+<li>Lean on tooling that removes manual steps under pressure — e.g. the Celery/Redis scheduled reporting pipeline exists specifically so reports go out reliably without someone triggering them by hand.</li>
+</ul>`},
+{q:"Tell me about a time you had to learn something new quickly.",a:`<ul>
+<li>Needed a conversational interface POC for common HR queries (attendance, leave, payroll) — hadn't used Rasa before.</li>
+<li>Built a proof of concept integrating Rasa with the existing Django HRMS.</li>
+<li>Configured intents, entities, and dialogue flows for those specific use cases.</li>
+<li>Didn't ship to production, but gave the team a concrete feasibility/effort answer before further investment.</li>
+</ul>`},
+{q:"Why Django, and when would you not use it?",a:`<ul>
+<li><strong>Use Django when:</strong> data-heavy, business-logic-heavy apps — ORM, admin, auth, and DRF give a lot for free (fits an HRMS well).</li>
+<li><strong>Consider alternatives when:</strong> it's a thin, high-throughput API with little business logic — would lean toward FastAPI for lower overhead and native async support (have hands-on experience with both).</li>
+</ul>`},
+{q:"How do you handle a production incident?",a:`<ul>
+<li>Contain and communicate first — confirm scope (one client vs all 48+, one module vs system-wide).</li>
+<li>Reproduce with real data if possible; check logs and recent deploys for correlation.</li>
+<li>Fix forward with the smallest safe change — no large refactors under pressure.</li>
+<li>Afterwards: write up root cause and, where it makes sense, add a structural safeguard (like the grade-aware helpers) so the same bug class can't recur silently.</li>
+</ul>`},
+{q:"Tell me about a disagreement you had with a teammate or lead.",a:`<ul>
+<li>Ground disagreements in data/trade-offs, not opinion.</li>
+<li>Example: on the real-time chat project, debated how much middleware to build upfront (rate limiting, security headers, presence tracking) vs shipping views first.</li>
+<li>Made the case that middleware touches every request path and is harder to retrofit later.</li>
+<li>Outcome: agreed to sequence middleware/architecture as phase one before views and forms.</li>
+</ul>`},
+{q:"Tell me about a time you made a technical decision with incomplete information.",a:`<ul>
+<li>Choosing the multi-tenancy approach (shared DB + tenant FK vs separate schemas) before every client's data-isolation requirement was fully known.</li>
+<li>Went with shared DB + tenant FK as the reversible, lower-cost default, keeping schema-per-tenant as an escape hatch if a client later needed stronger isolation.</li>
+<li>Principle: prefer the reversible decision when information is incomplete; leave a clear path to change course.</li>
+</ul>`},
+{q:"Describe a time you improved a team process, not just code.",a:`<ul>
+<li>Introduced consistent grade-aware helper functions instead of letting each report/view compute grade logic independently.</li>
+<li>Reduced duplicate, inconsistent logic across payroll views, report builder, and TDS views.</li>
+<li>Made future payroll rule changes a one-place fix instead of a hunt across the codebase.</li>
+</ul>`},
+{q:"How do you prioritize technical debt against new features?",a:`<ul>
+<li>Prioritize debt that actively causes incidents or blocks upcoming feature work — not debt that's just "ugly."</li>
+<li>Example: the grade-field debt was prioritized immediately because it was silently corrupting financial data, not just inconvenient.</li>
+<li>Package smaller cleanups alongside feature work in the same area, rather than requesting a separate "refactor sprint."</li>
+</ul>`},
+{q:"Tell me about giving or receiving difficult feedback.",a:`<ul>
+<li>Keep feedback specific and tied to code/behavior, not the person.</li>
+<li>In PR reviews, point to the exact pattern (e.g. a missing <code>select_related</code> causing N+1s) and explain the concrete cost, rather than a vague "this could be better."</li>
+<li>When receiving it, confirm understanding and follow up with what changed, so the feedback visibly closed the loop.</li>
+</ul>`},
+{q:"What are your strengths?",a:`<ul>
+<li>Tracing data-integrity problems back to their real root cause rather than patching symptoms (grade-structure bug).</li>
+<li>Comfortable owning a feature end-to-end — models, Celery jobs, deployment on AWS.</li>
+</ul>`},
+{q:"What's an area you're working on improving?",a:`<ul>
+<li>Broader front-end depth — effective with Django templates/Bootstrap/vanilla JS and have used React, but want more fluency to own a feature fully across the stack.</li>
+<li>Actively building this through side projects rather than waiting for it to come up on the job.</li>
+</ul>`},
+{q:"Where do you see yourself in a few years?",a:`<ul>
+<li>Deeper into backend architecture and systems that need to be reliable and fast at scale.</li>
+<li>More ownership over technical decisions — senior/lead track, or being the go-to for the hardest data/performance problems.</li>
+</ul>`},
+{q:"Why should we hire you?",a:`<ul>
+<li>5+ years of hands-on Django/Python experience on a production system with real scale (48+ client organizations).</li>
+<li>Track record of owning problems end-to-end — from root-causing a payroll data-integrity bug to shipping the fix across reports, payslips, and tax views.</li>
+<li>Comfortable across the full backend surface: APIs, background processing, real-time systems, and deployment — not just one narrow slice.</li>
+</ul>`},
+{q:"What do you know about our company?",a:`<ul>
+<li>Do targeted research before every interview — product, recent news, engineering blog, tech stack if public.</li>
+<li>Sample structure: "I know you [core product/mission]. I noticed [specific recent development] — that's part of what drew me to this role, especially given my background in [relevant overlap]."</li>
+<li>Never walk in with a generic non-answer here — it's one of the easiest questions to prepare for and one of the worst to fumble.</li>
+</ul>`},
+{q:"What are your salary expectations?",a:`<ul>
+<li>Research the market range for the role/level/location first (Glassdoor, Levels.fyi, AmbitionBox, peer conversations).</li>
+<li>Give a range, not a single number, and anchor it to market data: "Based on my research for this role and level, I'm looking at [range] — happy to be flexible depending on the full package."</li>
+<li>It's fine to redirect once: "What range does the company have budgeted for this role?" before committing to a number.</li>
+</ul>`},
+{q:"What's your notice period, and when can you join?",a:`<ul>
+<li>State your actual contractual notice period plainly and confidently — this is a logistics question, not a test.</li>
+<li>If there's flexibility (buyout, negotiated early release), mention it only if true.</li>
+</ul>`},
+{q:"Are you interviewing with other companies?",a:`<ul>
+<li>Honesty with light framing is fine: "Yes, I'm exploring a few opportunities in parallel to make sure I find the right fit" — signals you're in demand without oversharing specifics.</li>
+<li>Never fabricate competing offers to create false urgency — it can easily backfire if pressed for details.</li>
+</ul>`},
+{q:"How do you handle stress or pressure?",a:`<ul>
+<li>Ground it in a real example rather than a generic claim.</li>
+<li>Sample: "Payroll has hard, non-negotiable dates, so pressure is routine. I handle it by scoping early, flagging risk the moment I see it, and prioritizing whatever blocks the deadline — polish comes after."</li>
+</ul>`},
+{q:"Describe your ideal work environment / team.",a:`<ul>
+<li>Be specific and genuine rather than generic ("great culture, good people").</li>
+<li>Sample angles: values code review and knowledge-sharing, comfortable with direct technical debate, likes having real ownership over a problem area rather than being handed fully-specified tickets.</li>
+</ul>`},
+{q:"What motivates you at work?",a:`<ul>
+<li>Solving root-cause problems rather than patching symptoms (tie back to the grade-structure bug).</li>
+<li>Owning something end-to-end and seeing it work reliably at scale (48+ client organizations).</li>
+</ul>`},
+{q:"Tell me about a time you failed, or a project that didn't go as planned.",a:`<ul>
+<li>Pick something real and low-stakes-but-honest, not a disguised humblebrag.</li>
+<li>Sample: the Rasa HR-chatbot POC didn't move to production — in hindsight, scoping a clearer success criterion upfront would have made the go/no-go decision faster and clearer for stakeholders.</li>
+<li>Always close with the concrete lesson applied afterward.</li>
+</ul>`},
+{q:"How do you stay updated with new technology?",a:`<ul>
+<li>Name real habits: following release notes for Django/DRF/Celery, trying new tools in side projects (e.g. picking up FastAPI, experimenting with Rasa) before they're needed on the job.</li>
+<li>Avoid vague answers like "I read blogs" with no specifics — name an actual source or recent thing learned.</li>
+</ul>`},
+{q:"Are you comfortable with on-call, weekend deploys, or a hybrid/onsite work model?",a:`<ul>
+<li>Answer honestly and directly — this is a logistics/fit question, not a values test.</li>
+<li>If you have real on-call experience (production incident handling), mention it briefly to reinforce reliability.</li>
+</ul>`},
+{q:"How do you collaborate with non-engineering stakeholders (HR ops, finance, product)?",a:`<ul>
+<li>Translate technical constraints into business impact instead of jargon — e.g. explaining the grade-rename bug in terms of "which payslips were affected" rather than the FK-traversal internals.</li>
+<li>Confirm requirements in writing/tickets before building, especially for payroll rules where ambiguity is costly.</li>
+</ul>`}
+];
+
+/* ---- Situational: bullet checklists throughout ---- */
+const situationalQA = [
+{q:"A payroll report is producing wrong numbers for some employees after a policy change went live. What do you do?",a:`<span class="tag-sit">SITUATIONAL</span>
+<ul>
+<li>Scope first: one grade/client, or everyone? One month, or all history?</li>
+<li>Check if the fix needs a schema change or can be done by changing how values are derived — schema changes are riskier close to a payroll cutoff.</li>
+<li>Trace backward from the wrong output through the report builder into the source fields, rather than guessing.</li>
+</ul>
+<strong>Grounded in real experience:</strong>
+<ul>
+<li>A grade rename broke historical reporting; fix was deriving grade dynamically from <code>ComponentsMaster</code> relationships instead of trusting a live field — no schema change needed.</li>
+</ul>`},
+{q:"You inherit a module with confusing status logic and slow list pages. How do you approach it?",a:`<span class="tag-sit">SITUATIONAL</span>
+<ul>
+<li>Read existing behavior and tests before changing anything.</li>
+<li>Use query logging / django-debug-toolbar to find N+1 queries.</li>
+<li>Fix with <code>select_related</code>/<code>prefetch_related</code> or queryset annotations.</li>
+<li>Land fixes incrementally so each change is independently verifiable.</li>
+</ul>
+<strong>Grounded in real experience:</strong> fixed comment visibility logic and eliminated N+1 queries via annotations in a Support Tickets module, plus separate badge/status UI polish, delivered as independent reviewable changes.`},
+{q:"Product wants a large real-time feature (chat) added into an existing system mid-cycle. How do you scope the technical work?",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li><strong>Phase 1 — foundations:</strong> project scaffolding, layered architecture (views/services/repositories), ASGI + Celery wiring, cross-cutting middleware (auth, rate limiting, security headers, presence tracking) — hard to retrofit later.</li>
+<li><strong>Phase 2+:</strong> actual chat views, forms, UI, on top of a stable foundation.</li>
+</ul>
+Matches how a WhatsApp-inspired chat app on Django Channels/Redis/Celery was actually built — middleware and architecture before feature views.`},
+{q:"You support 40+ client organizations on one codebase, and each wants slightly different behavior. How do you avoid duplicating code?",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li>Push differences into configuration/data (per-tenant settings, feature flags) rather than branching code paths.</li>
+<li>Keep shared business logic in common utilities (grade-aware payroll helpers) so one fix benefits every tenant.</li>
+<li>Use template/static structure for per-organization branding without duplicating view logic.</li>
+</ul>
+Reflects how the multi-tenant HRMS handles 48+ client organizations off a single codebase.`},
+{q:"A scheduled Celery job appears to be generating duplicate or overlapping reports. What would you check?",a:`<span class="tag-sit">SITUATIONAL</span>
+<ul>
+<li>Task idempotency — can it safely run twice with the same input?</li>
+<li>Beat schedule overlap — is a long-running task's next run firing before the previous one finishes?</li>
+<li>Broker visibility timeout / retry config — are failed tasks being redelivered and re-executed?</li>
+<li>Add a Redis-based lock or unique constraint so only one instance of a report run can execute at a time.</li>
+</ul>
+Directly relevant to the daily/weekly/monthly/quarterly Celery+Redis reporting pipeline for payroll and HR reports.`},
+{q:"You need to add a feature, but touching a core model risks breaking historical reports. How do you proceed?",a:`<ul>
+<li>Prefer additive, derived changes over mutating shared state.</li>
+<li>Compute what you need from existing historical relationships, or add a new field/table, instead of repurposing an old one.</li>
+<li>This is the exact lesson from the <code>CustomUser.grade</code> issue — a live, overwritable field that other code implicitly trusted.</li>
+</ul>`},
+{q:"A client escalates a critical bug right before a payroll cutoff date. How do you triage?",a:`<span class="tag-sit">SITUATIONAL</span>
+<ul>
+<li>Confirm exact impact: which employees, which components (TDS, net pay, deductions)?</li>
+<li>Check for a safe, temporary manual workaround to protect the cutoff while a proper fix is developed.</li>
+<li>Prefer the smallest correct fix over a broader refactor under time pressure.</li>
+<li>Communicate status clearly and frequently to the client-facing team.</li>
+</ul>`},
+{q:"You disagree with a technical decision your lead has made. How do you handle it?",a:`<ul>
+<li>Raise it privately with specifics — concrete risk/trade-off, not just preference.</li>
+<li>Propose a concrete alternative.</li>
+<li>If they still decide otherwise after hearing the reasoning, commit fully rather than relitigating — unless new information appears.</li>
+</ul>`},
+{q:"A newer teammate keeps introducing regressions. How do you help without being confrontational?",a:`<ul>
+<li>Address it through the normal review process, not by singling them out.</li>
+<li>Leave specific, example-based PR comments pointing to the relevant test/pattern.</li>
+<li>Offer to pair on the trickier parts of the codebase (e.g. payroll grade logic) where the failure mode isn't obvious from the code alone.</li>
+</ul>`},
+{q:"You're asked to estimate a task you're not fully sure about. What do you say?",a:`<ul>
+<li>Give an honest range with stated assumptions rather than a confident guess.</li>
+<li>Example: "If it's just the API and DB changes: 2–3 days. If it also touches the Celery/reporting side: closer to a week. Let me confirm scope for half a day before committing to one number."</li>
+</ul>`},
+{q:"How would you scale a Django app handling many concurrent WebSocket connections?",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li>Move off the dev server to Daphne/Uvicorn workers behind Nginx, running multiple ASGI processes.</li>
+<li>Use a Redis-backed channel layer so any worker can deliver a message to a client connected on a different process.</li>
+<li>Track presence in Redis (not in-process memory) so presence data survives worker restarts and scales horizontally.</li>
+<li>Move heavy per-message work (persistence, notifications) into Celery so the WebSocket consumer stays fast.</li>
+</ul>
+This is the architecture used for the Django Channels-based chat app — Redis channel layer + Celery for the heavy lifting.`},
+{q:"A new developer pushes directly to main and breaks production. How do you respond?",a:`<ul>
+<li>Fix production first — revert the breaking change, don't debug live.</li>
+<li>Address it as a process gap, not a personal failure: branch protection, required PR review, and CI checks gating merges.</li>
+<li>Walk them through the intended Git workflow once things are stable.</li>
+</ul>`},
+{q:"You must choose between fixing a symptom now or the root cause, under deadline pressure. How do you decide?",a:`<ul>
+<li>Ship the smallest safe symptom fix if data integrity or money is at risk right now (as with the payroll cutoff scenario).</li>
+<li>Immediately log the root-cause fix as follow-up work with an owner and rough timeline — don't let "temporary" become permanent.</li>
+<li>If the symptom fix itself is risky (e.g. schema change under pressure), prefer no fix over a bigger blast radius, and communicate the trade-off up front.</li>
+</ul>`},
+{q:"A security vulnerability (e.g. an exposed endpoint or leaked credential) is discovered in production. What do you do?",a:`<span class="tag-sit">SITUATIONAL</span>
+<ul>
+<li>Contain immediately — rotate the exposed credential/key, patch or disable the vulnerable endpoint first, discuss root cause after.</li>
+<li>Assess blast radius: what data or actions were actually exposed, and for how long.</li>
+<li>Check logs/audit trail for evidence of exploitation, not just the existence of the hole.</li>
+<li>Notify stakeholders per whatever disclosure process applies, and add a regression test/monitoring so the same class of issue is caught automatically next time.</li>
+</ul>`},
+{q:"You're dropped into a completely unfamiliar codebase with no documentation and need to ship a fix in your first week. How do you approach it?",a:`<ul>
+<li>Start from the bug report / failing test, not the whole codebase — trace the actual execution path involved.</li>
+<li>Use the ORM/ISE tools (go-to-definition, query logging) to map real relationships instead of reading files top to bottom.</li>
+<li>Make the smallest, most reversible change that fixes the issue; avoid "improving" surrounding code you don't yet understand.</li>
+<li>Write down what you learned about the module as you go — it becomes the documentation that didn't exist.</li>
+</ul>`},
+{q:"A client asks for a feature that conflicts with data integrity or security best practices (e.g. bypassing an approval step). How do you respond?",a:`<span class="tag-sit">SITUATIONAL</span>
+<ul>
+<li>Understand the underlying business need first — there's often a legitimate problem behind the risky ask.</li>
+<li>Explain the concrete risk in business terms (e.g. "this could let a payslip be approved without the required sign-off, which affects audit compliance").</li>
+<li>Propose a safer alternative that solves the actual need — e.g. a faster approval path rather than removing approval.</li>
+<li>Escalate to product/lead if the client insists — this isn't a decision to make unilaterally either way.</li>
+</ul>`},
+{q:"You have multiple production support tickets with competing priority and one person's worth of time. How do you triage?",a:`<ul>
+<li>Rank by actual impact: data-corruption/financial-accuracy issues first, broad outages next, cosmetic/single-user issues last.</li>
+<li>Check if any ticket has a hard external deadline (payroll cutoff, compliance date) — that usually jumps the queue regardless of severity label.</li>
+<li>Communicate the triage order and rough ETA to whoever's waiting, rather than going silent while working.</li>
+</ul>`},
+{q:"You're asked to support a legacy Python 2-era or very outdated dependency in an otherwise modern codebase. How do you handle it?",a:`<ul>
+<li>Isolate it — wrap the legacy piece behind a clear interface/service boundary so the rest of the app doesn't depend on its internals directly.</li>
+<li>Evaluate whether it's a security/maintenance risk worth flagging for a scoped upgrade, versus something stable enough to leave alone.</li>
+<li>Never do a "quick" in-place upgrade of a load-bearing legacy dependency without tests covering its current behavior first.</li>
+</ul>`}
+];
+
+const messages = [
+{title:"LinkedIn — Connection request to a recruiter", sub:"~280 char limit on LinkedIn notes", body:`Hi [Recruiter Name], I came across the [Job Title] opening at [Company] and it's a strong match for my background — 5+ years building Django/DRF backends and multi-tenant HRMS/payroll systems at scale. Would love to connect and share more if there's a fit.
+
+Best,
+Rakesh`},
+{title:"LinkedIn — Message after applying", sub:"Send after you've applied through the portal", body:`Hi [Name], I just applied for the [Job Title] role at [Company] and wanted to reach out directly. I'm a Python/Django backend engineer with 5+ years of experience — most recently building and maintaining a multi-tenant HRMS serving 48+ client organizations, with real-time features (Django Channels/Redis) and Celery-based reporting pipelines. Happy to share more context on my application whenever convenient.
+
+Thanks,
+Rakesh Roy`},
+{title:"Email — Referral request to a connection", sub:"For someone you know at the target company", body:`Subject: Quick favor — referral for [Job Title] at [Company]
+
+Hi [Name],
+
+Hope you're doing well! I saw that [Company] has an opening for [Job Title] and I think it's a strong fit for my background — I'm a Python/Django backend engineer with 5+ years of experience, currently building a multi-tenant HRMS platform (DRF, MySQL, Redis, Celery, Django Channels) serving 48+ client organizations.
+
+Would you be open to referring me, or connecting me with the hiring manager if that's easier? Happy to send my resume and a short summary of relevant work to make it easy to pass along.
+
+Thanks so much either way,
+Rakesh`},
+{title:"Email — Cold outreach to a hiring manager", sub:"When there's no live posting yet, or you want to stand out", body:`Subject: Python/Django backend engineer — interested in [Team/Company]
+
+Hi [Name],
+
+I'm Rakesh Roy, a Python/Django backend engineer based in Hyderabad with 5+ years of experience building enterprise HRMS and SaaS systems — REST APIs with DRF, MySQL/Redis at scale, Celery-based async processing, and real-time features with Django Channels. I currently help maintain a multi-tenant platform serving 48+ client organizations.
+
+I'd love to learn more about what your team is building and whether there's a fit for a backend role. I've attached my resume — happy to talk whenever works for you.
+
+Best,
+Rakesh Roy
+rakeshroy.dev@gmail.com | +91-8919736316 | linkedin.com/in/rakeshroy-dev`},
+{title:"Email — Thank you after the interview", sub:"Send within 24 hours of the interview", body:`Subject: Thank you — [Job Title] interview
+
+Hi [Interviewer Name],
+
+Thank you for taking the time to speak with me today about the [Job Title] role. I enjoyed our conversation about [specific topic discussed — e.g. "how your team handles multi-tenant data isolation"], and it reinforced how well my experience building and scaling a multi-tenant HRMS at Medicover would translate to the challenges your team is working on.
+
+Please let me know if there's anything further you need from my side. Looking forward to hearing about next steps.
+
+Best regards,
+Rakesh Roy`},
+{title:"Email — Polite follow-up after no response", sub:"Send ~1 week after an interview with no update", body:`Subject: Following up — [Job Title] interview
+
+Hi [Name],
+
+Hope you're doing well. I wanted to follow up on our conversation about the [Job Title] role from [date] — I remain very interested in the opportunity and wanted to check if there's an update on timeline or next steps.
+
+Happy to provide any additional information in the meantime.
+
+Best,
+Rakesh Roy`}
+];
+
+/* ---- Technical Q&A, grouped by topic — advanced, bullet-first ---- */
+const technical = {
+python: [
+{q:"List vs tuple — when do you use each?",a:`<ul>
+<li>List: mutable, slightly heavier, use when the collection grows/shrinks/reorders.</li>
+<li>Tuple: immutable, hashable (usable as a dict key), slightly faster to iterate — use for fixed, heterogeneous data (a coordinate pair, a DB row).</li>
+</ul>`},
+{q:"Explain the GIL and its real impact on concurrency.",a:`<ul>
+<li>Only one thread executes Python bytecode at a time in CPython.</li>
+<li>CPU-bound multi-threaded code gets no real parallelism because of this.</li>
+<li>I/O-bound code (network/file/DB waits) still benefits from threads — GIL is released during I/O waits.</li>
+<li>For true CPU parallelism: use <code>multiprocessing</code> (separate processes, separate GILs) instead of threading.</li>
+<li>This is why Celery workers (separate OS processes) are used for CPU/DB-heavy background jobs like payroll report generation, rather than in-process threads.</li>
+</ul>`, lvl:1},
+{q:"What are *args and **kwargs, and where have you used them?",a:`<ul>
+<li><code>*args</code> collects extra positional args into a tuple; <code>**kwargs</code> collects extra keyword args into a dict.</li>
+<li>Used to write pass-through decorators, e.g. wrapping a view or Celery task without knowing its exact signature.</li>
+</ul>
+<pre><code><span class="kw">def</span> log_call(fn):
+    def wrapper(*args, **kwargs):
+        print(f"Calling {fn.__name__}")
+        return fn(*args, **kwargs)
+    return wrapper</code></pre>`},
+{q:"Explain Python decorators with a practical example.",a:`<ul>
+<li>A decorator wraps a function to add behavior without changing its code.</li>
+<li>Used for permission checks/logging around views, and wrapping Celery task functions with retry/error-logging before scheduled payroll reports run.</li>
+</ul>
+<pre><code><span class="kw">def</span> retry_on_failure(fn):
+    def wrapper(*args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"{fn.__name__} failed: {e}")
+            raise
+    return wrapper</code></pre>`},
+{q:"What are generators, and why use them?",a:`<ul>
+<li>Produce values lazily with <code>yield</code> instead of building a full list in memory.</li>
+<li>Used for streaming large payroll datasets row-by-row without loading everything into memory at once.</li>
+</ul>
+<pre><code><span class="kw">def</span> employee_batches(queryset, size=500):
+    batch = []
+    for row in queryset.iterator():
+        batch.append(row)
+        if len(batch) == size:
+            yield batch
+            batch = []
+    if batch:
+        yield batch</code></pre>`},
+{q:"Shallow copy vs deep copy?",a:`<ul>
+<li>Shallow copy (<code>copy.copy</code>, <code>list(x)</code>): new outer object, nested objects still shared references.</li>
+<li>Deep copy (<code>copy.deepcopy</code>): recursively copies nested objects too — changes to the copy never affect the original.</li>
+<li>Use deep copy when mutating nested structures (a dict of lists) and full independence is required.</li>
+</ul>`},
+{q:"== vs is?",a:`<ul>
+<li><code>==</code> checks value equality (calls <code>__eq__</code>).</li>
+<li><code>is</code> checks identity — same object in memory.</li>
+<li>Use <code>is</code> only for <code>None</code>, <code>True</code>/<code>False</code>, and sentinel checks — never for value comparison.</li>
+</ul>`},
+{q:"Explain try/except/else/finally.",a:`<ul>
+<li><code>try</code>: code that might raise.</li>
+<li><code>except</code>: catches specific exceptions.</li>
+<li><code>else</code>: runs only if no exception was raised.</li>
+<li><code>finally</code>: always runs, for cleanup (closing connections/releasing locks).</li>
+</ul>
+<pre><code>try:
+    result = process_payroll(employee)
+except ValidationError as e:
+    logger.warning(e)
+else:
+    save_result(result)
+finally:
+    release_lock()</code></pre>`},
+{q:"Write a context manager and explain when you'd use one.",a:`<ul>
+<li>Manages setup/teardown around a <code>with</code> block — file handles, DB transactions, distributed locks.</li>
+<li>Implement via a class with <code>__enter__</code>/<code>__exit__</code>, or simpler with <code>@contextlib.contextmanager</code>.</li>
+</ul>
+<pre><code><span class="kw">from</span> contextlib import contextmanager
+
+@contextmanager
+def redis_lock(key):
+    acquired = redis_client.set(key, 1, nx=True, ex=30)
+    try:
+        yield acquired
+    finally:
+        if acquired:
+            redis_client.delete(key)</code></pre>`},
+{q:"Mutable default arguments — why is this a classic bug?",a:`<ul>
+<li>Default values are evaluated once, at function definition — not per call.</li>
+<li>A mutable default (a list) is shared and mutated across every call that omits the argument.</li>
+</ul>
+<pre><code><span class="cm"># Bug</span>
+def add_item(item, items=[]):
+    items.append(item)
+    return items
+
+<span class="cm"># Fix</span>
+def add_item(item, items=None):
+    if items is None:
+        items = []
+    items.append(item)
+    return items</code></pre>`},
+{q:"Explain Python's memory management: reference counting + garbage collection.",a:`<ul>
+<li>CPython primarily uses reference counting — an object is freed the instant its refcount hits zero.</li>
+<li>A cyclic garbage collector handles reference cycles (objects referencing each other) that refcounting alone can't clean up.</li>
+<li>Generational GC: objects are grouped into 3 generations; younger generations are collected more frequently since most objects die young.</li>
+<li>Practical impact: circular references (e.g. parent↔child object graphs) aren't leaks, but they add GC overhead — <code>weakref</code> can break the cycle when appropriate.</li>
+</ul>`, lvl:1},
+{q:"asyncio vs threading vs multiprocessing — how do you choose?",a:`<ul>
+<li><strong>asyncio:</strong> single-threaded cooperative concurrency — best for many concurrent I/O-bound tasks (thousands of open sockets) with minimal overhead; requires async-aware libraries end-to-end.</li>
+<li><strong>threading:</strong> simplest for a handful of I/O-bound tasks using blocking libraries (most of the Django/DRF ecosystem) — limited by the GIL for CPU work.</li>
+<li><strong>multiprocessing:</strong> true parallelism for CPU-bound work (data crunching, image processing) — separate memory per process, more overhead to share state.</li>
+<li>In practice: Celery + worker processes for CPU/DB-heavy async work; Django Channels' ASGI/async layer for many concurrent WebSocket connections.</li>
+</ul>`, lvl:1},
+{q:"Explain descriptors and where Django uses them.",a:`<ul>
+<li>A descriptor is an object defining <code>__get__</code>/<code>__set__</code> that customizes attribute access on another class.</li>
+<li>Django model fields are descriptors under the hood — accessing <code>employee.department</code> actually triggers a database-aware <code>__get__</code> that resolves the related object.</li>
+<li>Useful to know when debugging "why did accessing this attribute trigger a query" behavior in the ORM.</li>
+</ul>`, lvl:1},
+{q:"What are metaclasses, and have you needed one?",a:`<ul>
+<li>A metaclass controls how a class itself is constructed — "a class is an instance of its metaclass."</li>
+<li>Django's <code>ModelBase</code> metaclass is what turns declarative model field definitions into a full ORM-backed class at import time.</li>
+<li>Rarely needed directly in application code — usually a sign to reach for a simpler tool (decorator, mixin) unless building framework-level functionality.</li>
+</ul>`, lvl:1},
+{q:"List vs set vs dict — time complexity and when to use each.",a:`<ul>
+<li><strong>list:</strong> ordered, allows duplicates; membership check (<code>in</code>) is O(n).</li>
+<li><strong>set:</strong> unordered, unique elements; membership check is O(1) average — use for fast lookups/deduplication.</li>
+<li><strong>dict:</strong> key→value, O(1) average lookup by key — use whenever you need to associate data, not just check membership.</li>
+<li>Common real mistake: using a list for repeated membership checks in a loop (O(n²) overall) instead of converting to a set first.</li>
+</ul>`},
+{q:"Explain Python's `with` statement and why it's preferred over manual try/finally for resource handling.",a:`<ul>
+<li>Guarantees cleanup (<code>__exit__</code>) runs even if an exception occurs inside the block — same guarantee as <code>finally</code>, less boilerplate.</li>
+<li>Standard for file handles, DB connections/cursors, and locks.</li>
+<li>Multiple context managers can be combined: <code>with open(a) as f1, open(b) as f2:</code>.</li>
+</ul>`},
+{q:"What's the difference between a module and a package in Python?",a:`<ul>
+<li>A module is a single <code>.py</code> file.</li>
+<li>A package is a directory containing an <code>__init__.py</code> (implicit namespace packages exist without it since Python 3.3) and can contain multiple modules/sub-packages.</li>
+<li>Django apps are packages — each with models, views, etc. as separate modules.</li>
+</ul>`},
+{q:"What are Python type hints, and do they affect runtime behavior?",a:`<ul>
+<li>Type hints (<code>def f(x: int) -> str:</code>) are optional annotations — Python does not enforce them at runtime by default.</li>
+<li>Used by static tools (mypy) and IDEs for catching bugs before running, and by frameworks like FastAPI/Pydantic, which do use them at runtime for request validation.</li>
+<li>Improves readability/maintainability on a team codebase even without a type checker enforcing them.</li>
+</ul>`},
+{q:"Explain the walrus operator (`:=`) with an example.",a:`<pre><code><span class="cm"># before</span>
+data = fetch()
+if data:
+    process(data)
+
+<span class="cm"># with walrus</span>
+if (data := fetch()):
+    process(data)</code></pre>
+<ul><li>Assigns and returns a value in the same expression — useful for avoiding a redundant call/lookup, especially inside a loop or comprehension condition.</li></ul>`},
+{q:"Comprehension vs generator expression — what's the difference?",a:`<ul>
+<li>List comprehension <code>[x for x in y]</code> builds the full list in memory immediately.</li>
+<li>Generator expression <code>(x for x in y)</code> is lazy — values are produced one at a time on demand.</li>
+<li>Use a generator expression when passing into something that consumes an iterable once (<code>sum()</code>, <code>any()</code>) and building the full list would waste memory.</li>
+</ul>`},
+{q:"What are Python's built-in data types, and which are mutable vs immutable?",a:`<ul>
+<li><strong>Immutable:</strong> <code>int</code>, <code>float</code>, <code>complex</code>, <code>bool</code>, <code>str</code>, <code>tuple</code>, <code>frozenset</code>, <code>bytes</code>, <code>None</code>.</li>
+<li><strong>Mutable:</strong> <code>list</code>, <code>dict</code>, <code>set</code>, <code>bytearray</code>, and custom class instances by default.</li>
+<li><code>bool</code> is technically a subclass of <code>int</code> (<code>True == 1</code>, <code>False == 0</code>) — a common trivia question.</li>
+<li>Why it matters: immutable types are safe to use as dict keys / set members (hashable) and safe to share across functions without risk of unexpected mutation; mutable types need explicit copying if you want independence.</li>
+</ul>`},
+{q:"int vs float vs complex vs Decimal — when do you use each?",a:`<ul>
+<li><code>int</code>: arbitrary precision in Python (no overflow like fixed-width languages).</li>
+<li><code>float</code>: IEEE-754 double precision — has rounding error (<code>0.1 + 0.2 != 0.3</code>), fine for most calculations but risky for money.</li>
+<li><code>complex</code>: rarely needed outside scientific/engineering code (<code>3 + 4j</code>).</li>
+<li><code>decimal.Decimal</code>: exact base-10 arithmetic — the correct choice for financial calculations (payroll, tax) where float rounding error is unacceptable.</li>
+</ul>`},
+{q:"bytes vs bytearray vs str — what's the difference?",a:`<ul>
+<li><code>str</code>: immutable sequence of Unicode characters — text.</li>
+<li><code>bytes</code>: immutable sequence of raw byte values — binary data, network/file I/O.</li>
+<li><code>bytearray</code>: mutable version of <code>bytes</code> — useful when building up binary data incrementally.</li>
+<li>Conversion: <code>str.encode()</code> → bytes, <code>bytes.decode()</code> → str; always specify the encoding explicitly (<code>utf-8</code>) rather than relying on a platform default.</li>
+</ul>`},
+{q:"Explain the four pillars of OOP with a Python example relevant to your work.",a:`<ul>
+<li><strong>Encapsulation:</strong> bundling data + behavior together and controlling access — e.g. a <code>Payslip</code> class exposing a <code>calculate_net_pay()</code> method instead of letting external code manipulate raw component fields directly.</li>
+<li><strong>Abstraction:</strong> exposing only what's necessary — a service function like <code>get_grade_aware_component_totals()</code> hides the underlying FK-traversal complexity from callers.</li>
+<li><strong>Inheritance:</strong> a base <code>BaseReportGenerator</code> class with shared scheduling/logging logic, subclassed by <code>PayrollReportGenerator</code> and <code>AttendanceReportGenerator</code>.</li>
+<li><strong>Polymorphism:</strong> different report classes all implement a common <code>.generate()</code> method, so calling code can treat them interchangeably.</li>
+</ul>`},
+{q:"classmethod vs staticmethod vs instance method — what's the difference?",a:`<ul>
+<li><strong>Instance method:</strong> takes <code>self</code>, operates on a specific instance's data.</li>
+<li><strong>@classmethod:</strong> takes <code>cls</code>, operates on the class itself — commonly used for alternate constructors (<code>Employee.from_dict(data)</code>).</li>
+<li><strong>@staticmethod:</strong> takes neither — a utility function that's logically grouped with the class but doesn't need instance or class state.</li>
+</ul>
+<pre><code><span class="kw">class</span> Employee:
+    @classmethod
+    def from_dict(cls, data):
+        return cls(name=data['name'], salary=data['salary'])
+
+    @staticmethod
+    def is_valid_pan(pan: str) -> bool:
+        return bool(re.match(r'^[A-Z]{5}\\d{4}[A-Z]$', pan))</code></pre>`},
+{q:"Explain Python's dunder (magic) methods — name a few you've used or would use.",a:`<ul>
+<li><code>__init__</code>: constructor — set up initial state.</li>
+<li><code>__str__</code> / <code>__repr__</code>: human-readable vs unambiguous/debug representation — <code>__repr__</code> is what you see in a shell/log by default.</li>
+<li><code>__eq__</code> / <code>__hash__</code>: define equality and make an object usable as a dict key/set member.</li>
+<li><code>__len__</code>, <code>__getitem__</code>, <code>__iter__</code>: make a custom class support <code>len()</code>, indexing, and <code>for</code> loops respectively.</li>
+<li>Example: giving a custom <code>PayrollBatch</code> class <code>__iter__</code> so it can be looped over just like a list of payslips.</li>
+</ul>`},
+{q:"What is Method Resolution Order (MRO), and why does it matter with multiple inheritance?",a:`<ul>
+<li>MRO defines the order Python searches base classes for an attribute/method — uses the C3 linearization algorithm.</li>
+<li>Check it directly with <code>ClassName.__mro__</code> or <code>ClassName.mro()</code>.</li>
+<li>Matters with multiple inheritance / mixins (common in Django CBVs) — the order classes are listed in <code>class Foo(A, B):</code> determines which parent's method wins on a naming conflict.</li>
+</ul>`, lvl:1},
+{q:"What's the difference between a regular class, a dataclass, and a namedtuple?",a:`<ul>
+<li><strong>Regular class:</strong> full control, but boilerplate for <code>__init__</code>, <code>__repr__</code>, <code>__eq__</code> if you want them.</li>
+<li><strong>@dataclass:</strong> auto-generates <code>__init__</code>, <code>__repr__</code>, <code>__eq__</code> from type-annotated fields — great for simple data containers (a DTO passed between service functions).</li>
+<li><strong>namedtuple:</strong> immutable, lightweight, tuple-based — good for simple fixed records where immutability is wanted and no methods are needed.</li>
+</ul>
+<pre><code><span class="kw">from</span> dataclasses import dataclass
+
+@dataclass
+class PayrollResult:
+    employee_id: int
+    net_pay: float
+    tds: float</code></pre>`},
+{q:"Explain the @property decorator and when you'd use it.",a:`<ul>
+<li>Lets a method be accessed like an attribute (<code>obj.value</code> instead of <code>obj.value()</code>), while still running logic behind the scenes.</li>
+<li>Used for computed/derived attributes, or to add validation on assignment via a paired <code>@x.setter</code>.</li>
+</ul>
+<pre><code><span class="kw">class</span> Payslip:
+    @property
+    def net_pay(self):
+        return self.gross - self.deductions
+
+    @net_pay.setter
+    def net_pay(self, value):
+        raise AttributeError("net_pay is computed, not settable")</code></pre>`},
+{q:"How do you write a decorator that takes its own arguments (a parametrized decorator)?",a:`<ul>
+<li>Needs an extra outer function layer — the outermost function takes the decorator's arguments and returns the actual decorator.</li>
+</ul>
+<pre><code><span class="kw">def</span> cache_for(seconds):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            <span class="cm"># check/set a TTL cache keyed by args here</span>
+            return fn(*args, **kwargs)
+        return wrapper
+    return decorator
+
+@cache_for(seconds=60)
+def get_dashboard_totals():
+    ...</code></pre>
+<ul><li><code>functools.wraps</code> matters here — without it, the wrapped function loses its original <code>__name__</code>/docstring, which breaks introspection, logging, and some framework tooling.</li></ul>`, lvl:1},
+{q:"How would you explain reference counting and a real memory leak risk in a long-running Python service?",a:`<ul>
+<li>Every object tracks how many references point to it; it's freed the instant that count hits zero.</li>
+<li>Real leak risk: module-level caches/dicts that keep growing (e.g. an in-memory dict caching per-request data with no eviction) — objects stay referenced forever, so refcounting never frees them.</li>
+<li>In a long-running Celery worker or Gunicorn process, this shows up as slowly climbing memory (RSS) over hours/days — the fix is bounding the cache size/TTL or moving it to Redis with a TTL.</li>
+</ul>`, lvl:1}
+],
+django: [
+{q:"Explain Django's MTV architecture.",a:`<ul>
+<li><strong>Model:</strong> data + business rules via the ORM.</li>
+<li><strong>View:</strong> request-handling logic (or ViewSets/serializers in DRF for APIs).</li>
+<li><strong>Template:</strong> renders HTML output.</li>
+<li>Django itself acts as the controller, routing requests to views — its take on MVC.</li>
+</ul>`},
+{q:"select_related vs prefetch_related — when do you use each?",a:`<ul>
+<li><code>select_related</code>: SQL JOIN, for forward FK/one-to-one — one query total.</li>
+<li><code>prefetch_related</code>: separate query per related set, joined in Python — for reverse FK and many-to-many.</li>
+<li>Choosing wrong (or skipping both) is the most common N+1 cause — fixed directly in a ticketing module alongside queryset annotations.</li>
+</ul>
+<pre><code>Employee.objects.select_related('department').prefetch_related('leave_requests')</code></pre>`},
+{q:"How does Django's middleware chain work?",a:`<ul>
+<li>Wraps every request/response in layered order.</li>
+<li>Request flows down through each middleware's <code>process_request</code>/<code>__call__</code> before reaching the view.</li>
+<li>Response flows back up in reverse order.</li>
+<li>Built a custom middleware suite for a Channels chat app: rate limiting, security headers, activity tracking, structured logging — as separate composable classes.</li>
+</ul>`},
+{q:"Write a custom Django middleware, and explain the execution order with MIDDLEWARE settings.",a:`<ul>
+<li>Modern (new-style) middleware is a callable class with <code>__init__(self, get_response)</code> and <code>__call__(self, request)</code>.</li>
+<li>Order in <code>MIDDLEWARE</code> settings matters: for the request phase, middleware runs top-to-bottom; for the response phase, it runs bottom-to-top — so the last middleware in the list is "closest" to the view.</li>
+<li>Real example: a security-headers middleware should sit late in the list (close to the response) so it can guarantee headers are set on every response, including ones raised by earlier middleware.</li>
+</ul>
+<pre><code><span class="kw">class</span> RequestLoggingMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        start = time.time()
+        response = self.get_response(request)     <span class="cm"># view runs here</span>
+        duration = time.time() - start
+        logger.info(f"{request.path} took {duration:.2f}s")
+        return response</code></pre>`},
+{q:"What are Django's built-in middleware classes, and what does each do?",a:`<ul>
+<li><code>SecurityMiddleware</code>: enforces HTTPS redirects, HSTS, and a few security headers.</li>
+<li><code>SessionMiddleware</code>: attaches <code>request.session</code>, backed by the configured session engine (DB, cache, signed cookie).</li>
+<li><code>CommonMiddleware</code>: handles things like APPEND_SLASH and disallowed-user-agent blocking.</li>
+<li><code>CsrfViewMiddleware</code>: enforces CSRF protection on unsafe methods.</li>
+<li><code>AuthenticationMiddleware</code>: attaches <code>request.user</code> based on the session.</li>
+<li>Custom middleware (rate limiting, security headers, activity tracking) is added alongside these, in a deliberate position in the list.</li>
+</ul>`},
+{q:"ASGI vs WSGI — what's the actual difference, and why does it matter for your work?",a:`<ul>
+<li><strong>WSGI</strong> (Web Server Gateway Interface): the traditional synchronous interface between a Python web app and a server — one request in, one response out, connection then closes. Standard Django views run on WSGI (via Gunicorn).</li>
+<li><strong>ASGI</strong> (Asynchronous Server Gateway Interface): the async successor — supports long-lived connections (WebSockets), HTTP/2, and background tasks alongside normal request/response, not just synchronous request-response.</li>
+<li>Django Channels requires ASGI specifically because a WebSocket connection has to stay open and handle bidirectional messages — something WSGI's request-in/response-out model can't do.</li>
+<li>In practice: an app can run WSGI for normal HTTP views and ASGI for the WebSocket/Channels portion, served by Daphne/Uvicorn instead of (or alongside) Gunicorn.</li>
+</ul>`},
+{q:"If a project needs both traditional views and WebSockets, how do WSGI and ASGI coexist?",a:`<ul>
+<li>Django's <code>asgi.py</code> can route HTTP requests to the normal Django view layer while routing WebSocket connections to Channels consumers — using Channels' <code>ProtocolTypeRouter</code>.</li>
+<li>In deployment, an ASGI server (Daphne/Uvicorn) sits behind Nginx and handles all traffic types; Gunicorn+WSGI is only needed if some part of the deployment specifically requires the older sync-only path.</li>
+<li>This is the exact setup used for a Django Channels-based chat layer added inside an otherwise standard Django HRMS.</li>
+</ul>`, lvl:1},
+{q:"Django signals — what's the real risk?",a:`<ul>
+<li>Signals (e.g. <code>post_save</code>) let decoupled code react to model events.</li>
+<li>Risk: hidden control flow — logic firing implicitly on save is harder to debug/test.</li>
+<li>Bulk operations (<code>bulk_create</code>/<code>bulk_update</code>) skip signals entirely, causing subtle bugs.</li>
+<li>Preference: explicit service-layer functions over signals for anything business-critical, like payroll calculations.</li>
+</ul>`},
+{q:"Design multi-tenancy in Django for many client organizations.",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li><strong>Shared DB + tenant FK</strong> (used for 48+ client orgs): simplest, lowest ops overhead; isolation enforced at the query layer.</li>
+<li><strong>Schema-per-tenant:</strong> stronger isolation, more migration/ops overhead.</li>
+<li><strong>DB-per-tenant:</strong> highest isolation and cost — reserved for clients with strict compliance needs.</li>
+<li>With shared-DB: a base manager/queryset that auto-filters by current tenant, plus per-tenant template/branding overrides, avoids duplicating business logic per client.</li>
+</ul>`, lvl:1},
+{q:"APIView vs ViewSets vs function-based views in DRF?",a:`<ul>
+<li>Function-based (<code>@api_view</code>): simplest, one-off endpoints.</li>
+<li><code>APIView</code>: class-based, custom logic per HTTP method.</li>
+<li><code>ModelViewSet</code> + Router: generates full CRUD automatically — efficient when a model needs standard REST behavior with minimal custom logic.</li>
+</ul>`},
+{q:"How do you handle background/async work in Django?",a:`<ul>
+<li>Celery with Redis as broker — request handler enqueues a task and returns immediately; a worker executes it asynchronously.</li>
+<li>This is how daily/weekly/monthly/quarterly payroll and HR reports get generated and delivered without blocking the request cycle.</li>
+</ul>`},
+{q:"How does Django Channels differ from the normal request/response cycle?",a:`<ul>
+<li>Standard Django uses WSGI — synchronous request in, response out, connection closed.</li>
+<li>Channels adds ASGI support for long-lived connections (WebSockets), routed to Consumers instead of Views.</li>
+<li>Uses a channel layer (Redis-backed) so multiple server processes can broadcast to the right connected clients.</li>
+<li>Used this for real-time chat and notifications inside an HRMS.</li>
+</ul>`},
+{q:"How do you secure a Django app in production?",a:`<ul>
+<li><code>DEBUG=False</code> with correct <code>ALLOWED_HOSTS</code>.</li>
+<li>HTTPS enforced with secure cookies.</li>
+<li>Environment-based secrets — never in source control.</li>
+<li>CSRF protection kept on for form-based views.</li>
+<li>Rate limiting on sensitive endpoints.</li>
+<li>Dependencies patched regularly.</li>
+<li>Implemented custom security-header and rate-limiting middleware directly for a Channels app.</li>
+</ul>`},
+{q:"Migrations — how do you handle a risky change (e.g. renaming a field used elsewhere)?",a:`<ul>
+<li>Migrations are generated diffs of model state, applied in order, tracked in <code>django_migrations</code>.</li>
+<li>Avoid a destructive rename in one step. Instead:
+  <ul>
+    <li>Add the new field.</li>
+    <li>Backfill data.</li>
+    <li>Migrate code to use the new field.</li>
+    <li>Remove the old field only in a later release.</li>
+  </ul>
+</li>
+<li>Same reasoning behind fixing the payroll grade bug by deriving values from existing relationships instead of restructuring the schema under time pressure.</li>
+</ul>`},
+{q:"Why can a queryset run multiple times unexpectedly?",a:`<ul>
+<li>Querysets are lazy — no DB hit until evaluated (iteration, slicing with a value, <code>len()</code>, etc.).</li>
+<li>Evaluating the same queryset multiple times (in a loop, then again for a count) re-queries each time.</li>
+<li>Fix: force evaluation once with <code>list()</code>, or cache when the same data is used more than once.</li>
+</ul>`},
+{q:"How would you design a Django caching strategy for a read-heavy HR dashboard?",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li><strong>Per-view cache</strong> (<code>cache_page</code>) for pages that are identical across requests for a period.</li>
+<li><strong>Low-level cache API</strong> (<code>cache.get</code>/<code>cache.set</code>) for expensive, specific computations (aggregate payroll totals).</li>
+<li><strong>Redis</strong> as the cache backend for shared, fast, TTL-based invalidation across multiple app servers.</li>
+<li><strong>Cache invalidation:</strong> explicit invalidation on the write path (e.g. on payslip finalize) rather than relying purely on TTL, when correctness matters.</li>
+<li>This is the same Redis-caching approach used to reduce MySQL load on payroll trend queries.</li>
+</ul>`, lvl:1},
+{q:"How would you implement rate limiting / throttling in a DRF API?",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li>DRF built-in: <code>UserRateThrottle</code>/<code>AnonRateThrottle</code> for simple per-user/per-IP limits.</li>
+<li>Custom middleware for finer control — token-bucket or sliding-window counters stored in Redis, keyed by user/IP/endpoint.</li>
+<li>Return <code>429 Too Many Requests</code> with a <code>Retry-After</code> header.</li>
+<li>Built a custom rate-limiting middleware class as part of a Channels-based chat app's middleware suite.</li>
+</ul>`, lvl:1},
+{q:"Serializer vs ModelSerializer in DRF — when do you use each?",a:`<ul>
+<li><code>Serializer</code>: fully manual field declaration — used when the shape doesn't map 1:1 to a model (a report/aggregation payload).</li>
+<li><code>ModelSerializer</code>: auto-generates fields from a model, plus default <code>create()</code>/<code>update()</code> — used for standard CRUD on a model.</li>
+<li>Override <code>validate_&lt;field&gt;</code> / <code>validate()</code> for cross-field business rules DRF can't infer automatically (e.g. a payroll date range check).</li>
+</ul>`},
+{q:"How do Django class-based views (CBVs) compare to function-based views (FBVs)?",a:`<ul>
+<li>CBVs (e.g. <code>ListView</code>, <code>UpdateView</code>) reduce boilerplate for standard CRUD patterns via mixins and inheritance.</li>
+<li>FBVs are more explicit and easier to read for one-off, non-standard logic.</li>
+<li>Preference is often FBVs for business-logic-heavy views (easier to trace top-to-bottom) and CBVs/ViewSets for standard REST resources.</li>
+</ul>`},
+{q:"How do you structure Django settings for multiple environments (dev/staging/prod)?",a:`<ul>
+<li>Split settings into a base module plus environment-specific overrides (<code>settings/base.py</code>, <code>settings/production.py</code>), or use environment variables with a library like <code>django-environ</code>.</li>
+<li>Never commit real secrets — load them from environment variables/secret managers, with safe local defaults for development only.</li>
+<li>Used a split-settings package approach when scaffolding the Django Channels chat application.</li>
+</ul>`},
+{q:"How do you write and run tests in Django?",a:`<ul>
+<li><code>django.test.TestCase</code> wraps each test in a transaction that's rolled back after — fast, isolated tests against a real test database.</li>
+<li><code>pytest-django</code> is a common alternative for more flexible fixtures and parametrized tests.</li>
+<li>For payroll logic specifically: test the calculation functions directly with known inputs/expected outputs, separate from testing the view/API layer.</li>
+</ul>
+<pre><code>python manage.py test app_name.tests.PayrollTests.test_grade_totals</code></pre>`},
+{q:"How do you handle file uploads and static/media files in Django?",a:`<ul>
+<li><code>MEDIA_ROOT</code>/<code>MEDIA_URL</code> for user-uploaded content, <code>STATIC_ROOT</code>/<code>STATIC_URL</code> for app assets — kept separate.</li>
+<li>In production, serve both via Nginx or S3, not through the Django app process itself.</li>
+<li>Validate file type/size server-side before saving — never trust the client-supplied extension alone.</li>
+</ul>`},
+{q:"How would you version a Django REST Framework API?",a:`<ul>
+<li>URL path versioning (<code>/api/v1/...</code>) is the simplest and most explicit — easy for clients to pin to a version.</li>
+<li>DRF also supports header-based and query-param versioning via <code>DEFAULT_VERSIONING_CLASS</code>.</li>
+<li>For a multi-tenant system with many client integrations, URL versioning is usually safest since it's visible and cacheable.</li>
+</ul>`},
+{q:"What's the difference between Django's `Meta.unique_together` and a `UniqueConstraint`?",a:`<ul>
+<li><code>unique_together</code> is the older API, still supported but effectively legacy.</li>
+<li><code>UniqueConstraint</code> (in <code>Meta.constraints</code>) is the modern replacement — supports conditional uniqueness (<code>condition=</code>) and naming the constraint explicitly, which matters for clear DB error messages.</li>
+</ul>`, lvl:1}
+],
+redis: [
+{q:"What Redis data structures have you used, and for what?",a:`<ul>
+<li><strong>String:</strong> simple cached values (a computed payroll total, a session token).</li>
+<li><strong>Hash:</strong> structured per-entity data (a user's presence/session details).</li>
+<li><strong>Set/Sorted Set:</strong> presence tracking, leaderboard-style ranking, deduplication.</li>
+<li><strong>Pub/Sub + channel layer:</strong> Django Channels' cross-process message broadcasting for WebSocket consumers.</li>
+</ul>`},
+{q:"How do you prevent a Celery task from running twice (duplicate payroll reports)?",a:`<ul>
+<li>Acquire a Redis lock (<code>SET key value NX EX ttl</code>) at the start of the task; skip execution if the lock isn't acquired.</li>
+<li>Make the task itself idempotent where possible — safe to re-run with the same input and produce the same result.</li>
+<li>Release the lock in a <code>finally</code> block so a crash doesn't leave it stuck.</li>
+</ul>
+<pre><code>acquired = redis_client.set(f"lock:report:{report_id}", 1, nx=True, ex=300)
+if not acquired:
+    return  <span class="cm"># another worker already running this</span></code></pre>`, lvl:1},
+{q:"Redis caching strategies — cache-aside vs write-through?",a:`<ul>
+<li><strong>Cache-aside (lazy loading):</strong> app checks cache first, falls back to DB on miss, then populates cache — simplest, used for most read-heavy report data.</li>
+<li><strong>Write-through:</strong> every write updates cache and DB together — stronger consistency, more write overhead.</li>
+<li>Chose cache-aside with a sensible TTL for payroll trend data since slight staleness is acceptable but stale writes are not.</li>
+</ul>`, lvl:1},
+{q:"How does a Redis-backed Django Channels layer scale across multiple servers?",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li>Each app server process connects to the same Redis instance as its channel layer backend.</li>
+<li>A message sent from a consumer on server A is published to Redis, and delivered to the correct group/consumer even if that client is connected to server B.</li>
+<li>This decouples "which server holds this WebSocket connection" from "who can send it a message" — essential for horizontal scaling.</li>
+</ul>`, lvl:1},
+{q:"How would you design Celery Beat scheduling to avoid overlapping payroll report runs?",a:`<ul>
+<li>Wrap the task body in a Redis lock keyed by report type + period, so a second scheduled trigger is a no-op if one is already running.</li>
+<li>Set task <code>time_limit</code>/<code>soft_time_limit</code> so a stuck task can't hold the lock forever.</li>
+<li>Monitor queue length/latency (e.g. via Flower) to catch a backlog before it causes overlapping runs.</li>
+</ul>`, lvl:1},
+{q:"Celery task retries — how do you configure them safely for payroll-related jobs?",a:`<ul>
+<li>Use <code>autoretry_for</code>/<code>retry_backoff</code> for transient errors (DB connection blips, gateway timeouts).</li>
+<li>Never blindly retry a task that isn't idempotent (e.g. one that sends an email or triggers a payment) without a dedupe/lock guard.</li>
+<li>Set a <code>max_retries</code> and route to a dead-letter/alerting path after exhaustion, rather than retrying silently forever.</li>
+</ul>`, lvl:1},
+{q:"Redis persistence — RDB vs AOF, and which would you pick for a cache vs a queue backend?",a:`<ul>
+<li><strong>RDB:</strong> periodic point-in-time snapshots — faster restarts, but can lose the last few minutes of data on a crash.</li>
+<li><strong>AOF:</strong> logs every write operation — more durable, larger file size, slightly slower.</li>
+<li>For pure caching (data reconstructable from MySQL), persistence durability matters less — RDB or even disabled is fine.</li>
+<li>For Redis used as a Celery broker/lock store, some durability matters more to avoid losing in-flight task state — AOF or a managed Redis with replication is safer.</li>
+</ul>`, lvl:1},
+{q:"What Redis eviction policies exist, and which fits a caching workload?",a:`<ul>
+<li><code>noeviction</code>: errors on write once memory is full — wrong for a cache.</li>
+<li><code>allkeys-lru</code> / <code>volatile-lru</code>: evict least-recently-used keys — good general-purpose cache default.</li>
+<li><code>volatile-ttl</code>: evict keys closest to expiring first — useful when TTL already encodes priority.</li>
+<li>For report-cache use cases, <code>allkeys-lru</code> is a safe default since all keys are cache data, not persisted state.</li>
+</ul>`, lvl:1},
+{q:"How would you achieve high availability for Redis in production?",a:`<ul>
+<li><strong>Redis Sentinel:</strong> monitors master/replica nodes and handles automatic failover for a single logical Redis dataset.</li>
+<li><strong>Redis Cluster:</strong> shards data across multiple nodes for both HA and horizontal scale, when a single node's memory/throughput isn't enough.</li>
+<li>For a moderate-scale HRMS cache/broker, Sentinel-managed master-replica is usually sufficient before Cluster becomes necessary.</li>
+</ul>`, lvl:1}
+],
+sql: [
+{q:"INNER JOIN vs LEFT JOIN vs RIGHT JOIN?",a:`<ul>
+<li><strong>INNER JOIN:</strong> only matching rows in both tables.</li>
+<li><strong>LEFT JOIN:</strong> all rows from the left table + matches from the right (NULLs where no match) — most common for "employee with optional department" queries.</li>
+<li><strong>RIGHT JOIN:</strong> mirror of LEFT — rarely used since you can flip table order instead.</li>
+</ul>`},
+{q:"Find duplicate rows in a table.",a:`<pre><code>SELECT employee_id, COUNT(*)
+FROM payslip
+GROUP BY employee_id, pay_period
+HAVING COUNT(*) > 1;</code></pre>
+<ul><li>Group by the columns that should be unique together; filter groups with <code>HAVING</code> since <code>WHERE</code> can't filter on aggregates.</li></ul>`},
+{q:"WHERE vs HAVING?",a:`<ul>
+<li><code>WHERE</code>: filters rows before aggregation.</li>
+<li><code>HAVING</code>: filters groups after <code>GROUP BY</code>/aggregation.</li>
+<li>Aggregate functions like <code>COUNT()</code> can't be used in <code>WHERE</code>.</li>
+</ul>`},
+{q:"How do indexes work, and what's the trade-off?",a:`<ul>
+<li>A B-tree index lets the DB find rows without scanning the full table — faster reads/filters/joins.</li>
+<li>Trade-off: slower writes (every INSERT/UPDATE updates the index too) and extra storage.</li>
+<li>Index columns that are frequently filtered/joined on — not every column.</li>
+</ul>`},
+{q:"Write a query for the second-highest salary, and the general Nth-highest case.",a:`<pre><code>SELECT MAX(salary) AS second_highest
+FROM employee
+WHERE salary < (SELECT MAX(salary) FROM employee);</code></pre>
+<pre><code><span class="cm">-- general Nth-highest, handles ties correctly</span>
+SELECT salary FROM (
+  SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+  FROM employee
+) t WHERE rnk = 2;</code></pre>`},
+{q:"Explain ACID and how you apply it in payroll writes.",a:`<ul>
+<li><strong>Atomicity:</strong> all-or-nothing.</li>
+<li><strong>Consistency:</strong> valid state to valid state.</li>
+<li><strong>Isolation:</strong> concurrent transactions don't corrupt each other's view.</li>
+<li><strong>Durability:</strong> committed data survives a crash.</li>
+<li>In Django, multi-step payroll writes are wrapped in <code>transaction.atomic()</code> so a partial failure never leaves half-applied payroll data.</li>
+</ul>`},
+{q:"How do you optimize a slow query on a large table?",a:`<ul>
+<li>Run <code>EXPLAIN</code> first — don't guess.</li>
+<li>Add an index on filtered/joined columns.</li>
+<li>Avoid <code>SELECT *</code> — fetch only needed columns.</li>
+<li>Avoid functions on indexed columns in <code>WHERE</code> (prevents index use).</li>
+<li>Paginate/limit large result sets.</li>
+<li>For repeat reporting queries, cache the result in Redis instead of recomputing.</li>
+</ul>`},
+{q:"Clustered vs non-clustered index?",a:`<ul>
+<li>Clustered index: determines physical row storage order — usually the primary key; only one per table.</li>
+<li>Non-clustered: separate structure pointing back to the row location; a table can have many.</li>
+<li>Clustered-index lookups are typically fastest — no extra pointer hop.</li>
+</ul>`},
+{q:"Explain SQL transaction isolation levels and a real anomaly each one prevents.",a:`<ul>
+<li><strong>Read Uncommitted:</strong> allows dirty reads (reading another transaction's uncommitted changes) — rarely used.</li>
+<li><strong>Read Committed</strong> (MySQL default varies by engine): prevents dirty reads, but allows non-repeatable reads.</li>
+<li><strong>Repeatable Read</strong> (InnoDB default): prevents non-repeatable reads; MySQL's implementation also prevents most phantom reads via gap locking.</li>
+<li><strong>Serializable:</strong> strictest — fully prevents phantom reads, at the cost of concurrency.</li>
+<li>Payroll writes favor stronger isolation (Repeatable Read+) since a phantom row appearing mid-calculation could corrupt a payroll run.</li>
+</ul>`, lvl:1},
+{q:"Optimistic vs pessimistic locking — which would you use for concurrent payroll edits?",a:`<ul>
+<li><strong>Pessimistic:</strong> lock the row (<code>SELECT ... FOR UPDATE</code>) before editing — safest under high contention, but reduces concurrency.</li>
+<li><strong>Optimistic:</strong> read without a lock, write with a version/timestamp check, retry on conflict — better throughput when conflicts are rare.</li>
+<li>For payroll finalization (low concurrent-edit frequency, high correctness need): pessimistic locking on the specific payslip row during finalization; optimistic elsewhere.</li>
+</ul>`, lvl:1},
+{q:"Write a query using a window function to compute a running total of monthly payroll cost.",a:`<pre><code>SELECT
+  month,
+  SUM(net_pay) AS monthly_cost,
+  SUM(SUM(net_pay)) OVER (ORDER BY month) AS running_total
+FROM payslip
+GROUP BY month
+ORDER BY month;</code></pre>`, lvl:1},
+{q:"When would you use a CTE vs a subquery vs a temp table?",a:`<ul>
+<li><strong>CTE (<code>WITH ... AS</code>):</strong> best for readability and when the same derived set is referenced more than once in a query.</li>
+<li><strong>Subquery:</strong> fine for a single, simple, one-off filter/derivation.</li>
+<li><strong>Temp table:</strong> when the intermediate result is large, reused across multiple separate queries, or needs its own indexes.</li>
+</ul>`, lvl:1},
+{q:"Explain database normalization — what problem do 1NF/2NF/3NF solve?",a:`<ul>
+<li><strong>1NF:</strong> atomic columns — no repeating groups/arrays in a single field.</li>
+<li><strong>2NF:</strong> every non-key column depends on the whole primary key, not part of a composite key.</li>
+<li><strong>3NF:</strong> no non-key column depends on another non-key column (removes transitive dependency).</li>
+<li>Goal: eliminate update/insert/delete anomalies — e.g. an employee's department name shouldn't be duplicated across every payslip row where it could drift out of sync.</li>
+<li>In practice: normalize the transactional schema, but selectively denormalize reporting tables for read performance.</li>
+</ul>`, lvl:1},
+{q:"Foreign key constraints and ON DELETE behavior — CASCADE vs SET NULL vs RESTRICT?",a:`<ul>
+<li><strong>CASCADE:</strong> deleting the parent row deletes dependent rows too — risky for financial data (an employee delete cascading into payslips would be a disaster).</li>
+<li><strong>SET NULL:</strong> dependent rows keep existing but the FK becomes null — needs the FK column to be nullable.</li>
+<li><strong>RESTRICT/NO ACTION:</strong> blocks the delete if dependent rows exist — safest default for anything historical/financial, forcing an explicit decision instead of silent cascade.</li>
+</ul>`, lvl:1},
+{q:"InnoDB vs MyISAM — why does the MySQL storage engine matter?",a:`<ul>
+<li><strong>InnoDB:</strong> supports transactions, foreign keys, row-level locking — the correct choice for financial/payroll data.</li>
+<li><strong>MyISAM:</strong> no transaction support, table-level locking, historically faster for read-heavy/no-integrity-needed workloads — largely legacy now.</li>
+<li>Default and correct choice for an HRMS/payroll schema is InnoDB, specifically for the transactional guarantees.</li>
+</ul>`, lvl:1},
+{q:"How would you approach database backup and replication strategy for a production HRMS?",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li>Automated daily full backups plus binary log (binlog) based point-in-time recovery for MySQL.</li>
+<li>A read replica for reporting/analytics queries, keeping load off the primary that handles payroll writes.</li>
+<li>Test restores periodically — a backup that's never been restored isn't a verified backup.</li>
+<li>Separate retention policy for compliance-relevant data (tax/payroll records) vs general operational data.</li>
+</ul>`, lvl:1}
+],
+pandas: [
+{q:"How do you handle missing data in a DataFrame?",a:`<ul>
+<li><code>df.dropna()</code> — remove rows/columns with missing values.</li>
+<li><code>df.fillna(value)</code> — fill with a constant/mean/median.</li>
+<li><code>df.interpolate()</code> — for time-series-like gaps.</li>
+<li>Never silently fill financial columns with 0 or a guess — missing pay data needs explicit flagging, not imputation.</li>
+</ul>`},
+{q:"Explain groupby with a payroll/HR example.",a:`<pre><code>df.groupby(['department', 'month'])['net_pay'].sum().reset_index()</code></pre>
+<ul><li>This is the kind of aggregation behind Streamlit dashboards showing payroll trends by department over time.</li></ul>`},
+{q:".loc vs .iloc?",a:`<ul>
+<li><code>.loc</code>: label-based (column/index names; inclusive on slice end).</li>
+<li><code>.iloc</code>: integer-position-based (exclusive on slice end, like Python list slicing).</li>
+</ul>`},
+{q:"Merge two DataFrames — what are the join types?",a:`<pre><code>pd.merge(employees, payroll, on='employee_id', how='left')</code></pre>
+<ul><li><code>how</code>: <code>'inner'</code>, <code>'left'</code>, <code>'right'</code>, <code>'outer'</code> — same semantics as SQL joins.</li>
+<li><code>'left'</code> used most often when enriching an employee list with optional payroll/attendance data so no employees are dropped.</li></ul>`},
+{q:"Find and remove duplicate rows.",a:`<pre><code>df.duplicated(subset=['employee_id', 'pay_period']).sum()  <span class="cm"># count</span>
+df = df.drop_duplicates(subset=['employee_id', 'pay_period'], keep='last')</code></pre>`},
+{q:"What is vectorization, and why does it matter for performance?",a:`<ul>
+<li>Vectorized ops apply to whole arrays/columns at once via optimized C code, instead of looping row-by-row in Python.</li>
+<li>A vectorized column calculation over tens of thousands of payroll rows can be orders of magnitude faster than <code>df.apply()</code> with a Python function — important for scheduled reports.</li>
+</ul>
+<pre><code><span class="cm"># Slow</span>
+df['tds'] = df.apply(lambda r: calc_tds(r['gross']), axis=1)
+
+<span class="cm"># Fast</span>
+df['tds'] = np.where(df['gross'] > threshold, df['gross'] * rate, 0)</code></pre>`},
+{q:"How do you process a DataFrame too large to fit in memory?",a:`<ul>
+<li>Read/process in chunks (<code>pd.read_csv(..., chunksize=N)</code>).</li>
+<li>Push filtering down to the database query instead of loading everything.</li>
+<li>Downcast numeric dtypes to save memory.</li>
+<li>Move to Dask/PySpark if it's a recurring problem, not a one-off.</li>
+</ul>`},
+{q:"NumPy array vs pandas Series?",a:`<ul>
+<li>NumPy array: raw, homogeneous, n-dimensional data container.</li>
+<li>pandas Series: wraps a 1-D array with an index and extra functionality — labeled access, alignment on operations, built-in missing-data handling.</li>
+</ul>`},
+{q:"Explain NumPy broadcasting rules with an example.",a:`<ul>
+<li>Two arrays are broadcastable if, comparing shapes from the trailing dimension, each pair of dimensions is equal or one of them is 1.</li>
+<li>Lets you apply an operation between arrays of different shapes without manually looping or reshaping.</li>
+</ul>
+<pre><code>salaries = np.array([50000, 60000, 70000])   <span class="cm"># shape (3,)</span>
+bonus_pct = np.array([[0.1], [0.2]])          <span class="cm"># shape (2,1)</span>
+result = salaries * bonus_pct                 <span class="cm"># broadcasts to shape (2,3)</span></code></pre>`, lvl:1},
+{q:"How would you reduce memory usage of a large pandas DataFrame?",a:`<ul>
+<li>Downcast numeric types: <code>pd.to_numeric(col, downcast='integer'/'float')</code>.</li>
+<li>Convert low-cardinality string columns (department, status) to <code>category</code> dtype.</li>
+<li>Drop unused columns before wide joins/merges rather than after.</li>
+<li>Use <code>df.memory_usage(deep=True)</code> to find the actual offenders before optimizing blindly.</li>
+</ul>`, lvl:1},
+{q:"How do you build a pivot table for a payroll cost breakdown, and how does it differ from groupby?",a:`<pre><code>pd.pivot_table(
+    df, values='net_pay', index='department',
+    columns='month', aggfunc='sum', fill_value=0
+)</code></pre>
+<ul><li><code>pivot_table</code> reshapes results into a wide grid (rows × columns) for reporting; <code>groupby</code> returns a long/tall result — pivot is usually the better fit for dashboard-style tables.</li></ul>`, lvl:1},
+{q:"How do you create a NumPy array, and what are the common constructors?",a:`<pre><code>np.array([1, 2, 3])
+np.zeros((3, 4))          <span class="cm"># 3x4 array of zeros</span>
+np.ones((2, 2))
+np.arange(0, 10, 2)       <span class="cm"># [0,2,4,6,8]</span>
+np.linspace(0, 1, 5)      <span class="cm"># 5 evenly spaced values from 0 to 1</span>
+np.random.seed(42)
+np.random.randint(0, 100, size=10)
+np.eye(3)                 <span class="cm"># 3x3 identity matrix</span></code></pre>`},
+{q:"Explain NumPy indexing and slicing, including boolean and fancy indexing.",a:`<pre><code>arr = np.array([10, 20, 30, 40, 50])
+
+arr[1:3]              <span class="cm"># basic slicing -> [20, 30]</span>
+arr[arr > 25]          <span class="cm"># boolean indexing -> [30, 40, 50]</span>
+arr[[0, 2, 4]]         <span class="cm"># fancy indexing -> [10, 30, 50]</span>
+
+matrix = np.array([[1,2,3],[4,5,6]])
+matrix[0, :]           <span class="cm"># first row</span>
+matrix[:, 1]           <span class="cm"># second column</span></code></pre>
+<ul><li>Boolean indexing is how conditional column logic is usually vectorized in payroll calculations (e.g. <code>df['tds'] = np.where(condition, a, b)</code>).</li></ul>`},
+{q:"reshape vs flatten vs ravel — what's the difference?",a:`<ul>
+<li><code>reshape(new_shape)</code>: returns a new view with a different shape (same data, no copy when possible) — total element count must match.</li>
+<li><code>flatten()</code>: always returns a 1-D **copy**.</li>
+<li><code>ravel()</code>: returns a flattened array, but a **view** when possible (faster, but modifying it can modify the original).</li>
+</ul>`, lvl:1},
+{q:"What's the difference between a NumPy copy and a view — why does it matter?",a:`<ul>
+<li>A **view** shares the same underlying memory as the original array — modifying it modifies the original (basic slicing returns a view).</li>
+<li>A **copy** is fully independent (fancy/boolean indexing, or an explicit <code>.copy()</code>, returns a copy).</li>
+<li>A real bug this causes: slicing an array, modifying the slice, and being surprised the original array changed too — use <code>.copy()</code> explicitly when independence is needed.</li>
+</ul>`, lvl:1},
+{q:"How do you perform aggregation and linear algebra operations in NumPy?",a:`<pre><code>arr.sum(); arr.mean(); arr.std(); arr.min(); arr.max()
+arr.sum(axis=0)     <span class="cm"># column-wise sum for a 2D array</span>
+arr.sum(axis=1)     <span class="cm"># row-wise sum</span>
+
+<span class="cm"># linear algebra</span>
+a.dot(b)  or  a @ b       <span class="cm"># matrix multiplication</span>
+a.T                        <span class="cm"># transpose</span>
+np.linalg.inv(matrix)     <span class="cm"># matrix inverse</span></code></pre>`},
+{q:"How do you stack or concatenate NumPy arrays?",a:`<pre><code>np.concatenate([a, b])          <span class="cm"># along existing axis</span>
+np.vstack([a, b])               <span class="cm"># stack vertically (row-wise)</span>
+np.hstack([a, b])               <span class="cm"># stack horizontally (column-wise)</span></code></pre>`},
+{q:"What's the difference between astype() and using np.where() for type/value conditional logic?",a:`<ul>
+<li><code>astype(dtype)</code>: converts the entire array/column to a new dtype (e.g. <code>float64</code> → <code>int32</code>) — used for type conversion, not conditional logic.</li>
+<li><code>np.where(condition, a, b)</code>: element-wise conditional selection — the vectorized equivalent of an if/else applied per element, without changing dtype.</li>
+</ul>`},
+{q:"How do you create a pandas Series and DataFrame from scratch?",a:`<pre><code>pd.Series([10, 20, 30], index=['a', 'b', 'c'])
+
+pd.DataFrame({
+    'name': ['A', 'B'],
+    'salary': [50000, 60000]
+})
+
+pd.DataFrame(list_of_dicts)   <span class="cm"># common shape from an API/DB result</span></code></pre>`},
+{q:"How do you read and write different file formats with pandas?",a:`<pre><code>pd.read_csv('file.csv')
+pd.read_excel('file.xlsx', sheet_name='Sheet1')
+pd.read_json('file.json')
+pd.read_sql('SELECT * FROM payslip', connection)
+
+df.to_csv('out.csv', index=False)
+df.to_excel('out.xlsx', index=False)
+df.to_parquet('out.parquet')   <span class="cm"># columnar, compressed — good for large datasets</span></code></pre>
+<ul><li>Parquet is preferred over CSV for large intermediate datasets — smaller file size, preserves dtypes, faster read/write.</li></ul>`},
+{q:"apply() vs map() vs applymap() — what's the difference?",a:`<ul>
+<li><code>Series.map(func_or_dict)</code>: element-wise transform on a single Series — also accepts a dict for value substitution.</li>
+<li><code>DataFrame.apply(func, axis=)</code>: applies a function along rows (<code>axis=1</code>) or columns (<code>axis=0</code>) — can return scalars or Series.</li>
+<li><code>DataFrame.applymap(func)</code>: applies a function element-wise across the **entire** DataFrame (deprecated in newer pandas in favor of <code>.map()</code> on the DataFrame).</li>
+<li>Prefer vectorized operations over all three where possible — they all fall back to slower Python-level iteration internally.</li>
+</ul>`},
+{q:"How do you filter a DataFrame with multiple conditions, and what does .query() offer?",a:`<pre><code><span class="cm"># boolean mask</span>
+df[(df['salary'] > 50000) & (df['department'] == 'Eng')]
+
+<span class="cm"># .query() — often more readable for complex conditions</span>
+df.query("salary > 50000 and department == 'Eng'")</code></pre>
+<ul><li>Note: use <code>&amp;</code>/<code>|</code> with parentheses around each condition for boolean masks — Python's <code>and</code>/<code>or</code> don't work element-wise on Series.</li></ul>`},
+{q:"How do you work with dates and time series in pandas?",a:`<pre><code>df['date'] = pd.to_datetime(df['date'])
+df['month'] = df['date'].dt.month
+df['weekday'] = df['date'].dt.day_name()
+
+<span class="cm"># set as index for time-series operations</span>
+df = df.set_index('date')
+
+<span class="cm"># resample — e.g. monthly payroll totals from daily data</span>
+df.resample('M')['net_pay'].sum()
+
+<span class="cm"># rolling window — e.g. 3-month moving average of cost</span>
+df['net_pay'].rolling(window=3).mean()</code></pre>`, lvl:1},
+{q:"concat vs merge vs join — when do you use each?",a:`<ul>
+<li><code>pd.concat([df1, df2])</code>: stacks DataFrames along an axis (rows or columns) — used when combining datasets with the same/similar structure (e.g. appending next month's payroll rows).</li>
+<li><code>pd.merge(df1, df2, on=...)</code>: SQL-style join on key columns — used when combining related but differently-shaped data (employees + payroll).</li>
+<li><code>df1.join(df2)</code>: convenience wrapper around merge, joining on the index by default rather than a column.</li>
+</ul>`},
+{q:"How do you use pandas' string accessor (.str) methods?",a:`<pre><code>df['name'].str.lower()
+df['name'].str.strip()
+df['email'].str.contains('@company.com')
+df['name'].str.split(' ', expand=True)   <span class="cm"># split into multiple columns</span></code></pre>
+<ul><li>The <code>.str</code> accessor vectorizes string operations across a whole column — much faster than looping with <code>.apply(lambda x: x.lower())</code>.</li></ul>`},
+{q:"How do you work with categorical data in pandas, and why does it help?",a:`<pre><code>df['department'] = df['department'].astype('category')
+pd.get_dummies(df['department'])   <span class="cm"># one-hot encoding</span></code></pre>
+<ul>
+<li><code>category</code> dtype stores each unique value once and uses integer codes internally — big memory savings for low-cardinality columns (department, status, grade) repeated across many rows.</li>
+<li>Also speeds up <code>groupby</code> on that column since comparisons become integer comparisons.</li>
+</ul>`, lvl:1},
+{q:"value_counts(), unique(), and nunique() — what does each return?",a:`<pre><code>df['department'].unique()      <span class="cm"># array of distinct values</span>
+df['department'].nunique()     <span class="cm"># count of distinct values</span>
+df['department'].value_counts() <span class="cm"># counts per distinct value, sorted descending</span></code></pre>
+<ul><li><code>value_counts()</code> is the quick way to sanity-check a categorical column's distribution before building a report — e.g. confirming employee counts per department look right.</li></ul>`},
+{q:"How would you profile and speed up a slow pandas pipeline end to end?",a:`<span class="tag-sys">OPTIMIZATION</span>
+<ul>
+<li>Time each stage separately (read, transform, aggregate, write) to find the actual bottleneck rather than guessing.</li>
+<li>Push filtering to the source query (SQL) instead of loading everything and filtering in pandas.</li>
+<li>Replace <code>.apply()</code>/Python loops with vectorized operations or <code>.str</code>/<code>.dt</code> accessors.</li>
+<li>Downcast dtypes and use <code>category</code> for repeated string columns.</li>
+<li>Read/write in chunks or switch to Parquet for large intermediate files.</li>
+<li>For truly large data that no longer fits comfortably: move to Dask, which mirrors the pandas API but parallelizes/chunks automatically.</li>
+</ul>`, lvl:1}
+],
+git: [
+{q:"git merge vs git rebase?",a:`<ul>
+<li><code>merge</code>: combines branches with a new merge commit, preserving full history including how it diverged.</li>
+<li><code>rebase</code>: replays your commits on top of the target branch — linear history, rewrites commit hashes.</li>
+<li>Use merge for shared/feature branches into develop (safe, non-destructive); rebase to clean up a local branch before opening a PR.</li>
+</ul>`},
+{q:"git fetch vs git pull?",a:`<ul>
+<li><code>fetch</code>: downloads remote changes, doesn't touch your working branch.</li>
+<li><code>pull</code>: fetch + merge (or rebase with <code>--rebase</code>) in one step.</li>
+<li>Prefer fetch, then review diffs before merging, when working on sensitive shared code (payroll logic).</li>
+</ul>`},
+{q:"How do you resolve a merge conflict?",a:`<ul>
+<li>Git marks conflicts with <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> markers.</li>
+<li>Understand both intended changes — don't just pick one blindly.</li>
+<li>Edit to the correct combined result, remove markers.</li>
+<li><code>git add</code> the resolved file, continue the merge/rebase.</li>
+</ul>`},
+{q:"What is git bisect, and when would you use it?",a:`<ul>
+<li>Binary-searches commit history to find which commit introduced a bug — mark commits good/bad until it narrows to one.</li>
+<li>Much faster than manually checking out commits one by one when a regression is confirmed but the cause isn't obvious.</li>
+</ul>`},
+{q:"How do you undo a commit that's already been pushed?",a:`<ul>
+<li>Prefer <code>git revert &lt;commit&gt;</code> — creates a new commit undoing the changes, safe for shared history.</li>
+<li>Avoid <code>git reset --hard</code> + force-push on shared branches — rewrites history others may have already pulled.</li>
+</ul>`},
+{q:"Describe a Git branching strategy for a team.",a:`<ul>
+<li>Protected main/develop branch.</li>
+<li>Short-lived feature branches per ticket.</li>
+<li>PRs with required review before merge.</li>
+<li>CI checks (tests/lint) gating the merge — ties directly into CI/CD pipelines used to streamline deployment.</li>
+</ul>`},
+{q:"Explain interactive rebase and a real use case.",a:`<ul>
+<li><code>git rebase -i</code> lets you reorder, squash, reword, or drop commits before merging.</li>
+<li>Real use: squashing "fix typo" / "wip" commits into one clean commit before opening a PR, so the reviewed history is meaningful.</li>
+</ul>`, lvl:1},
+{q:"When would you use git cherry-pick?",a:`<ul>
+<li>Applies a specific commit from one branch onto another without merging the whole branch.</li>
+<li>Real use: a critical payroll bugfix committed on a feature branch needs to go to production (main) immediately, without pulling in the rest of the unfinished feature.</li>
+</ul>`, lvl:1},
+{q:"What is git reflog, and when would you use it?",a:`<ul>
+<li>Records every change to branch tips (commits, resets, rebases, checkouts) — even ones no longer reachable from any branch.</li>
+<li>Real use: recovering commits "lost" after a bad <code>git reset --hard</code> or an interactive rebase gone wrong.</li>
+</ul>
+<pre><code>git reflog
+git checkout &lt;lost-commit-sha&gt;</code></pre>`, lvl:1},
+{q:"What are Git hooks, and have you used one?",a:`<ul>
+<li>Scripts that run automatically at specific Git lifecycle points (<code>pre-commit</code>, <code>pre-push</code>, <code>commit-msg</code>).</li>
+<li>Common use: a <code>pre-commit</code> hook running <code>flake8</code>/<code>black</code> so lint failures are caught before a commit is even made, complementing (not replacing) CI checks.</li>
+</ul>`, lvl:1}
+],
+cicd: [
+{q:"What is CI/CD and why does it matter?",a:`<ul>
+<li><strong>CI:</strong> automatically builds and tests every change to catch issues early.</li>
+<li><strong>CD:</strong> automates getting a validated change into staging/production.</li>
+<li>Reduces manual deployment error and shortens the feedback loop — used with Docker to streamline HRMS deployments.</li>
+</ul>`},
+{q:"What would a typical CI pipeline for a Django project include?",a:`<pre><code>test:
+  script:
+    - pip install -r requirements.txt
+    - python manage.py test
+    - flake8 .</code></pre>
+<ul><li>Install deps → lint (flake8/black) → run test suite (often against a test DB via a service container) → optional security/dependency scan, all gating whether a PR can merge.</li></ul>`},
+{q:"How does Docker help with deployment consistency?",a:`<ul>
+<li>Packages the app with its exact dependencies/runtime into an image — behaves identically in dev, staging, production.</li>
+<li>Eliminates "works on my machine" issues.</li>
+<li>Used alongside Nginx/Gunicorn for consistent Django deployments across environments.</li>
+</ul>`},
+{q:"How do you run DB migrations safely in a deployment pipeline?",a:`<ul>
+<li>Run migrations as an explicit, separate pipeline step — never silently inside app startup — so failures are visible before traffic shifts.</li>
+<li>For risky changes (altering a column type used in financial calculations), prefer additive, backwards-compatible migrations deployed ahead of the code that depends on them.</li>
+</ul>`},
+{q:"Continuous Delivery vs Continuous Deployment?",a:`<ul>
+<li><strong>Delivery:</strong> every validated change is deployable at the push of a button — a human approves the release.</li>
+<li><strong>Deployment:</strong> deploys automatically once it passes the pipeline — no manual gate.</li>
+</ul>`},
+{q:"How do you handle secrets in a CI/CD pipeline?",a:`<ul>
+<li>Never commit secrets to source control.</li>
+<li>Store as encrypted CI/CD environment variables/secrets, injected at build/deploy time.</li>
+<li>Load via environment variables in Django (e.g. <code>django-environ</code>) instead of hardcoding in <code>settings.py</code>.</li>
+</ul>`},
+{q:"Describe blue-green or canary deployment and when you'd use one for a payroll system.",a:`<ul>
+<li><strong>Blue-green:</strong> run two full production environments; switch traffic instantly from old (blue) to new (green); instant rollback by switching back.</li>
+<li><strong>Canary:</strong> roll the new version out to a small % of traffic first, monitor error rates, then ramp up.</li>
+<li>For a payroll system: canary a change touching calculation logic against a single low-risk client org first, watch for report discrepancies, then expand.</li>
+</ul>`, lvl:1},
+{q:"How would you design zero-downtime deployment for a schema change on a large, frequently-read table?",a:`<span class="tag-sys">SYSTEM</span>
+<ul>
+<li>Split into backward-compatible steps: add new column (nullable/default) → deploy code that writes to both old and new → backfill in batches → deploy code that reads from new → drop old column in a later release.</li>
+<li>Avoid a single blocking <code>ALTER TABLE</code> on a huge table in one step — batch backfills to avoid long locks.</li>
+<li>Run heavy backfill jobs via Celery in small batches during low-traffic windows.</li>
+</ul>`, lvl:1},
+{q:"What's your rollback strategy if a deployment introduces a critical bug?",a:`<ul>
+<li>Keep the previous Docker image/build artifact readily deployable — rollback should be "redeploy the last known-good image," not a scramble.</li>
+<li>For schema changes: only roll back safely if the migration was additive/backward-compatible (see zero-downtime pattern above) — a destructive migration makes rollback much harder, which is exactly why those are avoided in one step.</li>
+<li>Automate rollback as a pipeline action, not a manual SSH-and-fix process, so it's fast and repeatable under pressure.</li>
+</ul>`, lvl:1},
+{q:"Jenkins vs GitHub Actions/GitLab CI — how would you compare them?",a:`<ul>
+<li><strong>Jenkins:</strong> self-hosted, highly configurable via plugins, more operational overhead (you maintain the server).</li>
+<li><strong>GitHub Actions / GitLab CI:</strong> managed, YAML-defined pipelines tightly integrated with the repo — less setup, faster to get started, usage-based cost.</li>
+<li>Choice often comes down to existing infra and team size — a small team benefits from the lower operational burden of a managed CI service.</li>
+</ul>`, lvl:1}
+]
+};
+
+/* ---- System Design questions (own pill) ---- */
+const sysdesign = [
+{q:"Design a multi-tenant HRMS/payroll platform serving 50+ organizations.",a:`<span class="tag-sys">SYSTEM DESIGN</span>
+<strong>Clarify requirements</strong>
+<ul>
+<li>Data isolation level required per client (shared DB acceptable, or contractual/compliance need for separation)?</li>
+<li>Expected scale: employees per org, peak concurrent report generation (month-end)?</li>
+</ul>
+<strong>Key components</strong>
+<ul>
+<li>Django + DRF for core CRUD/business-workflow APIs.</li>
+<li>Tenant model: shared DB with an <code>organization_id</code> FK on every relevant table, enforced via a base queryset/manager.</li>
+<li>MySQL as system of record; Redis for caching and Celery broker.</li>
+<li>Celery for scheduled/async work: payroll calculation, TDS, report generation and delivery.</li>
+<li>Django Channels for real-time chat/notifications.</li>
+</ul>
+<strong>Scaling & reliability</strong>
+<ul>
+<li>Index and partition heavy tables (payslip, attendance) by organization + period for query performance.</li>
+<li>Horizontally scale app servers behind a load balancer; Celery workers scaled independently from web workers.</li>
+<li>Redis-based locks to prevent duplicate scheduled report runs across workers.</li>
+</ul>
+<strong>Trade-offs</strong>
+<ul>
+<li>Shared DB is cheaper to operate but requires strict discipline (every query must filter by tenant) — a missed filter is a data-leak risk.</li>
+</ul>`},
+{q:"Design a reliable scheduled payroll/HR report system that must never send duplicates.",a:`<span class="tag-sys">SYSTEM DESIGN</span>
+<ul>
+<li>Celery Beat triggers jobs on schedule (daily/weekly/monthly/quarterly).</li>
+<li>Each task acquires a Redis lock keyed by <code>(report_type, period, org_id)</code> before running — a second trigger for the same key is a no-op.</li>
+<li>Task writes a "report generated" record with a unique constraint on that same key, so even a race past the lock is caught at the DB level.</li>
+<li>Delivery (email/notification) is a separate idempotent step, keyed off the generated report ID, decoupled from generation.</li>
+<li>Failures route to a retry queue with backoff, then a dead-letter/alerting path after max retries.</li>
+</ul>`},
+{q:"Design a real-time chat and notification system inside an existing Django HRMS.",a:`<span class="tag-sys">SYSTEM DESIGN</span>
+<ul>
+<li>Django Channels (ASGI) alongside the existing WSGI app — Channels handles WebSocket connections, Django handles normal HTTP.</li>
+<li>Redis-backed channel layer so any app server instance can deliver a message to a client connected on a different instance.</li>
+<li>Layered architecture: views/services/repositories, so business logic isn't trapped inside Consumer classes.</li>
+<li>Custom middleware: WebSocket auth, rate limiting, security headers, presence tracking, structured logging.</li>
+<li>Heavy per-message work (persistence, push notification fan-out) offloaded to Celery so the consumer path stays fast.</li>
+<li>Phased delivery: foundations/middleware first (hard to retrofit), then feature views/UI.</li>
+</ul>`},
+{q:"Design a rate limiter for a public-facing API.",a:`<span class="tag-sys">SYSTEM DESIGN</span>
+<ul>
+<li><strong>Algorithm choice:</strong> token bucket (smooths bursts, simple to reason about) vs sliding window log (more precise, more memory).</li>
+<li>Store counters in Redis, keyed by <code>(user_id or IP, endpoint)</code>, with a TTL matching the window.</li>
+<li>Increment atomically (<code>INCR</code> + <code>EXPIRE</code>) to avoid race conditions under concurrent requests.</li>
+<li>Return <code>429</code> with a <code>Retry-After</code> header when the limit is hit.</li>
+<li>Apply as middleware so it's enforced consistently across all endpoints, not per-view.</li>
+</ul>`},
+{q:"Design an audit trail for sensitive payroll changes.",a:`<span class="tag-sys">SYSTEM DESIGN</span>
+<ul>
+<li>Append-only audit table: who changed what, old value, new value, timestamp, reason (if provided) — never update/delete audit rows.</li>
+<li>Write via an explicit service-layer function that wraps the actual change (not a signal, for auditability and to avoid silent bulk-operation gaps).</li>
+<li>Index by <code>(employee_id, changed_at)</code> and by <code>changed_by</code> for investigation queries.</li>
+<li>Retention/export strategy for compliance (e.g. TDS/tax-related changes often need multi-year retention).</li>
+</ul>`},
+{q:"Design a caching layer for a read-heavy analytics dashboard (Streamlit-style payroll trends).",a:`<span class="tag-sys">SYSTEM DESIGN</span>
+<ul>
+<li>Cache-aside pattern: check Redis first, compute and populate on miss, TTL based on how fresh the data needs to be (e.g. hourly for trend charts).</li>
+<li>Pre-warm cache via a Celery beat job right after nightly report generation, so the first user of the day doesn't pay the computation cost.</li>
+<li>Explicit invalidation on the write path for anything that must be immediately consistent (e.g. right after a payslip correction).</li>
+<li>Cache key includes all relevant filter dimensions (org, department, period) to avoid serving mismatched cached data.</li>
+</ul>`},
+{q:"How would you scale a Django REST API to handle 10x current traffic?",a:`<span class="tag-sys">SYSTEM DESIGN</span>
+<ul>
+<li>Profile first — find the actual bottleneck (DB, app CPU, N+1 queries) rather than scaling blindly.</li>
+<li>Horizontally scale stateless app servers behind a load balancer.</li>
+<li>Push read load to Redis cache and, if needed, read replicas for MySQL.</li>
+<li>Move anything non-critical-path (report generation, emails, exports) to Celery so web workers stay free for requests.</li>
+<li>Add pagination/rate limiting to prevent a few heavy clients from starving the rest.</li>
+<li>Re-check indexes and query plans at the new scale — patterns that were fine at 1x can fall over at 10x.</li>
+</ul>`}
+];
+
+/* ---- Resume Deep-Dive: tough, specific follow-ups an interviewer would ask ---- */
+const deepdive = [
+{q:"Walk me through exactly how grade-aware component totals work — which tables are involved?",a:`<ul>
+<li><code>CustomUser</code> holds the (unreliable, overwritable) live grade field — no longer trusted for historical data.</li>
+<li><code>ComponentsMaster</code> defines pay components per grade.</li>
+<li>Child "Values" tables hold the actual historical component values, linked back through FK relationships.</li>
+<li>Helper functions (<code>get_grade_aware_component_totals</code>, etc.) traverse from an employee + period → the correct historical component values via those FK relationships, instead of reading the live grade field.</li>
+<li>This makes grade resolution "point-in-time correct" rather than "current-state correct."</li>
+</ul>`},
+{q:"Why Django Channels instead of a third-party service (Pusher, Ably, Firebase) for real-time chat?",a:`<ul>
+<li>Keeps everything in one stack/deployment — no external vendor dependency or per-message pricing at scale.</li>
+<li>Full control over auth (reusing existing Django session/JWT auth) and business logic (message persistence, presence rules specific to HR workflows).</li>
+<li>Trade-off acknowledged: a managed service would have reduced initial build time and operational burden — the choice was scope/control vs speed, given full-stack ownership of the HRMS already.</li>
+</ul>`},
+{q:"Why Celery + Redis over Django-Q, cron, or a managed queue for scheduled reports?",a:`<ul>
+<li>Celery has mature support for scheduled periodic tasks (Beat), retries, and monitoring (Flower) — all needed for daily/weekly/monthly/quarterly reliability.</li>
+<li>Redis was already in use as a cache, so reusing it as the broker avoided adding another moving part (e.g. RabbitMQ) for this scale.</li>
+<li>Plain cron lacks built-in retry/observability and doesn't integrate cleanly with Django's ORM/app context for task code.</li>
+</ul>`},
+{q:"What specifically did you change to fix the N+1 queries in the ticketing module?",a:`<ul>
+<li>Identified them via query logging — repeated near-identical queries per row in the ticket list.</li>
+<li>Added queryset annotations to pull aggregate/related data (e.g. comment counts, latest status) in the same query instead of per-row lookups.</li>
+<li>Verified the fix by counting queries before/after on the same page load.</li>
+</ul>`},
+{q:"How exactly is data isolated between your 48+ client organizations technically?",a:`<ul>
+<li>Shared database, with an organization/tenant foreign key on every tenant-scoped model.</li>
+<li>A base manager/queryset pattern ensures views and reports filter by the current tenant by default, rather than relying on every individual query to remember to filter.</li>
+<li>Per-organization branding/customization handled through template and static-asset overrides, not through duplicated view/business logic.</li>
+</ul>`},
+{q:"What would you do differently if you rebuilt the multi-tenant HRMS today?",a:`<ul>
+<li>Design the grade/pay-structure model as history-aware from day one (versioned/point-in-time), instead of retrofitting it after the rename incident.</li>
+<li>Introduce the tenant-aware base queryset pattern earlier, rather than incrementally hardening it later.</li>
+<li>Add structured audit logging on payroll-affecting fields from the start.</li>
+</ul>`},
+{q:"You list Rasa as a POC, not shipped — what was the actual outcome and why didn't it go further?",a:`<ul>
+<li>Outcome: a working proof of concept handling sample attendance/leave/payroll queries through configured intents and dialogue flows.</li>
+<li>Purpose was explicitly feasibility/learning, not a committed roadmap item.</li>
+<li>Be honest in interview: it validated the integration was possible, but wasn't prioritized against other roadmap work — a good example of scoping a spike correctly rather than over-building an unvalidated feature.</li>
+</ul>`},
+{q:"Your resume says you optimized MySQL queries and added Redis caching — what did you actually measure?",a:`<ul>
+<li>Be ready to describe the before/after qualitatively if exact numbers weren't tracked: which pages were slow, what the fix was (index + select_related/prefetch_related + Redis cache), and the observed effect (faster load, lower DB load at peak).</li>
+<li>If you don't have exact percentages, say so plainly rather than inventing a number — describe the method (EXPLAIN plans, query counts) instead.</li>
+</ul>`}
+];
+
+const codingQuestions = [
+{q:"Check if a string is a palindrome.",a:`<pre><code><span class="kw">def</span> is_palindrome(s: str) -> bool:
+    cleaned = ''.join(ch.lower() for ch in s if ch.isalnum())
+    return cleaned == cleaned[::-1]
+
+print(is_palindrome("A man, a plan, a canal: Panama"))  <span class="cm"># True</span></code></pre>
+<ul><li>Complexity: O(n) time, O(n) space for the cleaned copy.</li></ul>`},
+{q:"Find the first non-repeating character in a string.",a:`<pre><code><span class="kw">from</span> collections import Counter
+
+def first_unique_char(s: str):
+    counts = Counter(s)
+    for ch in s:
+        if counts[ch] == 1:
+            return ch
+    return None</code></pre>
+<ul><li>Complexity: O(n) — one pass to count, one pass to find the first with count 1.</li></ul>`},
+{q:"Two Sum — find two numbers that add up to a target.",a:`<pre><code><span class="kw">def</span> two_sum(nums, target):
+    seen = {}
+    for i, n in enumerate(nums):
+        complement = target - n
+        if complement in seen:
+            return [seen[complement], i]
+        seen[n] = i
+    return None</code></pre>
+<ul><li>Complexity: O(n) time, O(n) space — hash map instead of O(n²) brute force.</li></ul>`},
+{q:"SQL: employees earning more than their department's average salary.",a:`<pre><code>SELECT e.employee_id, e.name, e.salary, e.department_id
+FROM employee e
+JOIN (
+  SELECT department_id, AVG(salary) AS avg_salary
+  FROM employee
+  GROUP BY department_id
+) dept_avg ON e.department_id = dept_avg.department_id
+WHERE e.salary > dept_avg.avg_salary;</code></pre>`},
+{q:"Django: fetch employees with department + all leave requests without N+1.",a:`<pre><code>employees = (
+    Employee.objects
+    .select_related('department')
+    .prefetch_related('leave_requests')
+    .all()
+)
+
+for emp in employees:
+    print(emp.department.name)              <span class="cm"># joined, no extra query</span>
+    for leave in emp.leave_requests.all():  <span class="cm"># prefetched, batched query</span>
+        print(leave.status)</code></pre>
+<ul><li><code>select_related</code> handles the forward FK with a JOIN; <code>prefetch_related</code> handles the reverse FK with one batched query instead of one per employee.</li></ul>`},
+{q:"Write a retry decorator with backoff.",a:`<pre><code><span class="kw">import</span> time, functools
+
+def retry(times=3, delay=1):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            last_exc = None
+            for attempt in range(times):
+                try:
+                    return fn(*args, **kwargs)
+                except Exception as e:
+                    last_exc = e
+                    time.sleep(delay)
+            raise last_exc
+        return wrapper
+    return decorator
+
+@retry(times=3, delay=2)
+def fetch_report():
+    ...</code></pre>
+<ul><li>Useful for wrapping flaky external calls (e.g. a payment gateway integration) inside a Celery task.</li></ul>`},
+{q:"Pandas: month-over-month growth of total payroll cost.",a:`<pre><code>monthly = df.groupby('month')['net_pay'].sum().sort_index()
+growth_pct = monthly.pct_change() * 100
+print(growth_pct)</code></pre>
+<ul><li><code>pct_change()</code> computes % change from the previous row in one line.</li></ul>`},
+{q:"Implement a simple LRU cache.",a:`<pre><code><span class="kw">from</span> collections import OrderedDict
+
+class LRUCache:
+    def __init__(self, capacity: int):
+        self.cache = OrderedDict()
+        self.capacity = capacity
+
+    def get(self, key):
+        if key not in self.cache:
+            return -1
+        self.cache.move_to_end(key)
+        return self.cache[key]
+
+    def put(self, key, value):
+        if key in self.cache:
+            self.cache.move_to_end(key)
+        self.cache[key] = value
+        if len(self.cache) > self.capacity:
+            self.cache.popitem(last=False)</code></pre>
+<ul><li><code>OrderedDict</code> makes get/put O(1); least-recently-used is always first, evicted with <code>popitem(last=False)</code>.</li></ul>`, lvl:1},
+{q:"Detect a cycle in a linked list.",a:`<pre><code><span class="kw">def</span> has_cycle(head) -> bool:
+    slow = fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            return True
+    return False</code></pre>
+<ul><li>Floyd's cycle detection (tortoise and hare) — O(n) time, O(1) space.</li></ul>`, lvl:1},
+{q:"Implement a thread-safe singleton in Python.",a:`<pre><code><span class="kw">import</span> threading
+
+class Singleton:
+    _instance = None
+    _lock = threading.Lock()
+
+    def __new__(cls):
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = super().__new__(cls)
+        return cls._instance</code></pre>
+<ul><li>Double-checked locking avoids acquiring the lock on every call once the instance exists.</li></ul>`, lvl:1},
+{q:"Implement cursor-based pagination for a Django API (vs offset pagination).",a:`<pre><code><span class="cm"># Offset pagination gets slow on large tables (DB still scans skipped rows)</span>
+Employee.objects.all()[offset:offset+limit]
+
+<span class="cm"># Cursor-based: seek from the last seen ID/timestamp instead</span>
+Employee.objects.filter(id__gt=last_seen_id).order_by('id')[:limit]</code></pre>
+<ul><li>Cursor pagination stays fast at any page depth and is stable if rows are inserted/deleted during paging — DRF supports this via <code>CursorPagination</code>.</li></ul>`, lvl:1},
+{q:"Implement a basic pub/sub in Python (conceptually mirrors Redis pub/sub used in Channels).",a:`<pre><code><span class="kw">class</span> PubSub:
+    def __init__(self):
+        self.subscribers = {}
+
+    def subscribe(self, topic, callback):
+        self.subscribers.setdefault(topic, []).append(callback)
+
+    def publish(self, topic, message):
+        for cb in self.subscribers.get(topic, []):
+            cb(message)</code></pre>
+<ul><li>This is the same pattern Django Channels' Redis channel layer implements at a distributed, multi-process level.</li></ul>`, lvl:1}
+];
+
+/* ---- FastAPI ---- */
+const fastapi = [
+{q:"What is FastAPI, and why reach for it over Django for a given project?",a:`<ul>
+<li>Async-first Python web framework built on Starlette (ASGI) + Pydantic for validation.</li>
+<li>Reach for it when: the service is a thin, high-throughput API with little admin/templating need, or when native <code>async</code>/<code>await</code> for I/O-bound calls (external APIs, async DB drivers) matters.</li>
+<li>Stick with Django/DRF when: the app is data/business-logic heavy and benefits from the ORM, admin, auth, and migrations out of the box — as with an HRMS.</li>
+<li>Have used both — FastAPI for a resume-intelligence/auto-fill service, Django/DRF for the core HRMS.</li>
+</ul>`},
+{q:"Explain Pydantic models — how do they differ from DRF serializers?",a:`<ul>
+<li>Pydantic models declare fields with Python type hints; validation and parsing happen automatically from that type information.</li>
+<li>DRF serializers do similar validation but are more tightly coupled to Django models (<code>ModelSerializer</code>) and the request/response cycle.</li>
+<li>Pydantic is faster (Rust-based core in v2) and framework-agnostic — usable outside FastAPI too, e.g. for validating config or Celery task payloads.</li>
+</ul>
+<pre><code><span class="kw">from</span> pydantic import BaseModel, EmailStr
+
+class EmployeeIn(BaseModel):
+    name: str
+    email: EmailStr
+    salary: float</code></pre>`},
+{q:"How does FastAPI's dependency injection work?",a:`<ul>
+<li><code>Depends()</code> declares a reusable dependency (DB session, current user, pagination params) that FastAPI resolves and injects automatically per request.</li>
+<li>Dependencies can themselves depend on other dependencies, forming a graph resolved once per request.</li>
+<li>Makes auth/DB-session code testable — override dependencies in tests instead of monkey-patching.</li>
+</ul>
+<pre><code><span class="kw">def</span> get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@app.get("/employees")
+def list_employees(db: Session = Depends(get_db)):
+    return db.query(Employee).all()</code></pre>`},
+{q:"Path, query, and body parameters — show the difference with an example.",a:`<pre><code>@app.get("/employees/{employee_id}")   <span class="cm"># path param</span>
+def get_employee(employee_id: int, active: bool = True):  <span class="cm"># query param</span>
+    ...
+
+@app.post("/employees")
+def create_employee(payload: EmployeeIn):  <span class="cm"># body — parsed via Pydantic</span>
+    ...</code></pre>
+<ul><li>FastAPI infers the parameter "location" from context: path variables, then Pydantic models default to body, plain types default to query.</li></ul>`},
+{q:"How do you handle async DB calls in FastAPI, given Django's ORM is traditionally sync?",a:`<ul>
+<li>Use an async driver/ORM: <code>databases</code>, SQLAlchemy 2.0 async engine, or <code>Tortoise ORM</code>, with <code>asyncpg</code>/<code>aiomysql</code>.</li>
+<li>A blocking DB call inside an <code>async def</code> route stalls the whole event loop — avoid mixing sync ORM calls directly in async routes; either use an async driver, or make the route a plain <code>def</code> (FastAPI runs sync routes in a thread pool automatically).</li>
+</ul>`, lvl:1},
+{q:"How do you deploy FastAPI in production?",a:`<ul>
+<li>Uvicorn as the ASGI server, typically behind Gunicorn using <code>UvicornWorker</code> for process management and multiple workers.</li>
+<li>Nginx in front for TLS termination, static files, and load balancing across workers/instances.</li>
+<li>Same Docker-based deployment pattern already used for Django — containerize, run behind Nginx, manage via CI/CD.</li>
+</ul>
+<pre><code>gunicorn app.main:app -k uvicorn.workers.UvicornWorker -w 4 -b 0.0.0.0:8000</code></pre>`},
+{q:"BackgroundTasks vs Celery in FastAPI — when do you use each?",a:`<ul>
+<li><code>BackgroundTasks</code>: runs after the response is sent, in-process — fine for quick, non-critical work (sending a confirmation email) with no need for retries/monitoring.</li>
+<li>Celery: needed for anything long-running, retryable, scheduled, or that must survive a process restart — the same reasoning already applied to payroll reporting jobs in Django.</li>
+</ul>`},
+{q:"How do you handle authentication in FastAPI?",a:`<ul>
+<li><code>OAuth2PasswordBearer</code> + JWT is the common pattern — issue a signed token on login, validate it via a dependency on protected routes.</li>
+<li>The validation dependency decodes the JWT, fetches/attaches the current user, and raises <code>401</code> on failure — reused across every protected route via <code>Depends()</code>.</li>
+</ul>
+<pre><code>oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    return get_user(payload["sub"])</code></pre>`},
+{q:"How do you test FastAPI endpoints?",a:`<ul>
+<li><code>TestClient</code> (built on <code>httpx</code>) lets you call routes directly in tests without running a real server.</li>
+<li>Override dependencies (e.g. swap the real DB session for a test one) via <code>app.dependency_overrides</code>.</li>
+</ul>
+<pre><code><span class="kw">from</span> fastapi.testclient import TestClient
+
+client = TestClient(app)
+
+def test_create_employee():
+    response = client.post("/employees", json={"name": "A", "email": "a@x.com", "salary": 50000})
+    assert response.status_code == 200</code></pre>`},
+{q:"Does FastAPI support WebSockets, and how does that compare to Django Channels?",a:`<ul>
+<li>Yes — native <code>@app.websocket()</code> routes since FastAPI is ASGI-based like Channels.</li>
+<li>Difference in practice: Channels is built specifically to slot into an existing Django app (auth, ORM, admin) via Consumers and a channel layer; FastAPI's WebSocket support is simpler and framework-native but has less built-in tooling for presence/group broadcasting — you'd typically add Redis pub/sub yourself for multi-process broadcast.</li>
+</ul>`, lvl:1},
+{q:"When would migrating a specific Django DRF endpoint to FastAPI actually make sense?",a:`<ul>
+<li>The endpoint is a narrow, high-throughput, I/O-bound service (e.g. a resume-parsing/auto-fill microservice) that doesn't need the rest of the Django app's models/admin.</li>
+<li>Not worth it for endpoints deeply coupled to Django ORM models and business logic already shared across the HRMS — the migration cost and duplicated auth/session logic usually outweighs the benefit there.</li>
+</ul>`, lvl:1},
+{q:"How does FastAPI use HTTP status codes, and how do you set a custom one?",a:`<ul>
+<li>Default success status is <code>200</code>; set a specific one via the route decorator's <code>status_code=</code> param (e.g. <code>201</code> for a create endpoint).</li>
+<li><code>HTTPException(status_code=..., detail=...)</code> raises an error response with the given code and JSON body.</li>
+<li>Validation errors from Pydantic automatically return <code>422 Unprocessable Entity</code> — worth knowing this differs from Django/DRF, which typically returns <code>400</code> for validation errors.</li>
+</ul>`},
+{q:"How would you implement global exception handling in FastAPI?",a:`<ul>
+<li><code>@app.exception_handler(ExceptionType)</code> registers a handler that converts a raised exception into a consistent JSON error response app-wide.</li>
+<li>Useful for turning internal exceptions (a custom <code>PayrollCalculationError</code>) into a clean, consistent API error shape instead of leaking a stack trace.</li>
+</ul>
+<pre><code>@app.exception_handler(PayrollCalculationError)
+def handle_payroll_error(request, exc):
+    return JSONResponse(status_code=400, content={"detail": str(exc)})</code></pre>`},
+{q:"response_model vs returning a plain dict in FastAPI — why does it matter?",a:`<ul>
+<li><code>response_model</code> filters and validates the outgoing data against a Pydantic schema — so extra/internal fields on your DB object are never accidentally leaked to the client.</li>
+<li>Also drives the auto-generated OpenAPI/Swagger docs, so API consumers see an accurate response shape.</li>
+<li>Returning a plain dict works but skips this safety net and documentation benefit.</li>
+</ul>`, lvl:1},
+{q:"How do you manage configuration/environment variables in a FastAPI app?",a:`<ul>
+<li><code>pydantic-settings</code>' <code>BaseSettings</code> reads from environment variables (and a <code>.env</code> file) into a typed, validated settings object — resolved once and injected via a dependency.</li>
+<li>Same principle as <code>django-environ</code> in Django — never hardcode secrets, and get validation/type-safety on config values for free.</li>
+</ul>`},
+{q:"How does FastAPI's automatic docs (Swagger/OpenAPI) work, and why does it matter?",a:`<ul>
+<li>FastAPI generates an OpenAPI schema from your route signatures and Pydantic models automatically, served at <code>/docs</code> (Swagger UI) and <code>/redoc</code>.</li>
+<li>No separate documentation-writing step — the docs stay in sync with the code because they're derived from it, unlike hand-maintained API docs which drift.</li>
+</ul>`}
+];
+
+/* ---- Optimization Techniques (cheat-sheet style checklists) ---- */
+const optimization = [
+{q:"Django ORM optimization checklist",a:`<ul>
+<li>Use <code>select_related()</code> for forward FK/O2O, <code>prefetch_related()</code> for reverse FK/M2M — eliminates N+1 queries.</li>
+<li><code>only()</code>/<code>defer()</code> to fetch just the columns you need on wide tables.</li>
+<li><code>values()</code>/<code>values_list()</code> when you don't need full model instances.</li>
+<li>Use <code>exists()</code> instead of <code>count() > 0</code> or <code>len(qs) > 0</code> for boolean checks.</li>
+<li><code>bulk_create()</code> / <code>bulk_update()</code> instead of looping with individual <code>.save()</code> calls.</li>
+<li><code>iterator()</code> for large querysets you only need to stream once (avoids loading everything into the queryset cache).</li>
+<li>Use <code>F()</code> expressions for atomic in-place updates (e.g. incrementing a counter) instead of read-modify-write in Python — avoids race conditions.</li>
+<li>Annotate aggregates in the DB (<code>annotate()</code>/<code>aggregate()</code>) instead of pulling rows into Python and summing in a loop.</li>
+<li>Set <code>CONN_MAX_AGE</code> for persistent DB connections instead of reconnecting per request.</li>
+</ul>`},
+{q:"Database / SQL optimization checklist",a:`<ul>
+<li>Run <code>EXPLAIN</code> before optimizing — confirm the actual bottleneck.</li>
+<li>Index columns used in <code>WHERE</code>, <code>JOIN</code>, and <code>ORDER BY</code> — but don't over-index (write cost).</li>
+<li>Avoid <code>SELECT *</code>; fetch only needed columns.</li>
+<li>Avoid wrapping indexed columns in functions inside <code>WHERE</code> (e.g. <code>WHERE YEAR(date) = 2026</code> defeats the index — use a range instead).</li>
+<li>Paginate/limit large result sets rather than fetching everything.</li>
+<li>Batch large writes/backfills instead of one giant transaction that locks the table.</li>
+<li>Use composite indexes matching your most common multi-column filters, in the right column order.</li>
+</ul>`},
+{q:"Caching strategy checklist (Redis)",a:`<ul>
+<li>Cache-aside for most read-heavy, tolerant-of-slight-staleness data (report/dashboard queries).</li>
+<li>Explicit invalidation on the write path for anything that must be immediately consistent (e.g. right after payslip correction).</li>
+<li>Key design: include every filter dimension (org, department, period) so you never serve mismatched cached data.</li>
+<li>Set sensible TTLs — balance staleness risk vs cache hit rate.</li>
+<li>Use Redis locks to prevent a "thundering herd" of simultaneous cache-miss recomputations for the same key.</li>
+<li>Pre-warm cache via a scheduled job right after nightly batch jobs finish, so the first user of the day isn't the one paying the compute cost.</li>
+</ul>`},
+{q:"API / DRF performance checklist",a:`<ul>
+<li>Paginate every list endpoint by default — never return an unbounded list.</li>
+<li>Use lightweight serializers for list views vs detail views (don't serialize fields the list UI doesn't show).</li>
+<li>Throttle/rate-limit expensive or public endpoints.</li>
+<li>Compress responses (gzip) for large JSON payloads.</li>
+<li>Use cursor-based pagination instead of offset pagination for large, frequently-paged tables.</li>
+<li>Push heavy computation (report generation, exports) to Celery instead of blocking the request.</li>
+</ul>`},
+{q:"Celery / async task optimization checklist",a:`<ul>
+<li>Keep tasks small and idempotent — safe to retry without side effects doubling up.</li>
+<li>Use Redis locks to prevent overlapping runs of the same scheduled job.</li>
+<li>Set <code>time_limit</code>/<code>soft_time_limit</code> so a stuck task can't hold a worker (or a lock) forever.</li>
+<li>Route heavy vs light tasks to separate queues so a burst of small tasks doesn't get stuck behind long-running ones.</li>
+<li>Use <code>autoretry_for</code> + backoff for transient errors; avoid blind retries on non-idempotent tasks.</li>
+<li>Monitor with Flower to catch backlog/latency before it causes overlapping runs.</li>
+</ul>`},
+{q:"Pandas / NumPy performance checklist",a:`<ul>
+<li>Vectorize instead of <code>df.apply()</code> with a Python function wherever possible.</li>
+<li>Downcast numeric dtypes (<code>pd.to_numeric(..., downcast=...)</code>) and use <code>category</code> dtype for low-cardinality strings.</li>
+<li>Read/process large files in chunks (<code>chunksize=</code>) instead of loading everything into memory.</li>
+<li>Push filtering to the database query instead of loading everything then filtering in pandas.</li>
+<li>Avoid growing a DataFrame row-by-row in a loop — build a list of dicts/rows and construct the DataFrame once.</li>
+<li>Use <code>.merge()</code>/<code>.groupby()</code> (vectorized, C-level) instead of manual Python joins/loops.</li>
+</ul>`},
+{q:"Python general performance checklist",a:`<ul>
+<li>Use built-in functions/comprehensions (implemented in C) over manual Python loops where possible.</li>
+<li>Use generators for large sequences you only need to iterate once, to avoid building full lists in memory.</li>
+<li>Use <code>multiprocessing</code> for CPU-bound parallel work; the GIL limits threads to I/O-bound concurrency.</li>
+<li>Cache expensive pure-function results with <code>functools.lru_cache</code> where inputs repeat.</li>
+<li>Profile before optimizing (<code>cProfile</code>, <code>line_profiler</code>) — fix the actual bottleneck, not the one you assume.</li>
+</ul>`},
+{q:"Delivery / infrastructure optimization checklist",a:`<ul>
+<li>Serve static/media assets via Nginx or S3+CDN, not through the Django/FastAPI app process.</li>
+<li>Enable gzip/br compression at the web-server layer.</li>
+<li>Use a CDN for assets used across all 48+ client organizations to cut origin load.</li>
+<li>Horizontally scale stateless app servers behind a load balancer before vertically scaling a single box.</li>
+<li>Separate Celery worker scaling from web-worker scaling — they have different resource profiles.</li>
+</ul>`}
+];
+
+/* ---- Cheat Sheets (condensed quick-reference) ---- */
+const cheatsheet = [
+{q:"Git commands cheat sheet",a:`<pre><code><span class="cm"># branching</span>
+git checkout -b feature/x
+git switch main
+
+<span class="cm"># staging & committing</span>
+git add -p               <span class="cm"># stage interactively</span>
+git commit --amend       <span class="cm"># fix last commit message/content</span>
+
+<span class="cm"># syncing</span>
+git fetch origin
+git rebase origin/main
+git push --force-with-lease   <span class="cm"># safer than --force</span>
+
+<span class="cm"># inspecting</span>
+git log --oneline --graph --all
+git diff main..feature/x
+git blame path/to/file.py
+
+<span class="cm"># undo</span>
+git restore path/to/file.py     <span class="cm"># discard unstaged changes</span>
+git reset --soft HEAD~1         <span class="cm"># undo last commit, keep changes staged</span>
+git revert &lt;commit&gt;             <span class="cm"># safe undo on shared history</span>
+
+<span class="cm"># finding bugs</span>
+git bisect start
+git bisect bad
+git bisect good &lt;commit&gt;
+
+<span class="cm"># stash</span>
+git stash push -m "wip"
+git stash pop</code></pre>`},
+{q:"Django manage.py & ORM cheat sheet",a:`<pre><code><span class="cm"># manage.py</span>
+python manage.py makemigrations
+python manage.py migrate
+python manage.py shell
+python manage.py dbshell
+python manage.py createsuperuser
+python manage.py test app_name
+
+<span class="cm"># common ORM patterns</span>
+Model.objects.filter(a=1).exclude(b=2)
+Model.objects.select_related('fk').prefetch_related('m2m')
+Model.objects.only('id', 'name')
+Model.objects.values_list('id', flat=True)
+Model.objects.bulk_create([...], batch_size=500)
+Model.objects.filter(id=1).update(count=F('count') + 1)
+Model.objects.annotate(total=Sum('amount')).filter(total__gt=1000)
+with transaction.atomic():
+    ...</code></pre>`},
+{q:"SQL syntax cheat sheet",a:`<pre><code><span class="cm">-- filtering & sorting</span>
+SELECT * FROM t WHERE x > 10 ORDER BY x DESC LIMIT 20;
+
+<span class="cm">-- joins</span>
+SELECT * FROM a JOIN b ON a.id = b.a_id;
+SELECT * FROM a LEFT JOIN b ON a.id = b.a_id;
+
+<span class="cm">-- aggregation</span>
+SELECT dept, COUNT(*), AVG(salary)
+FROM employee GROUP BY dept HAVING COUNT(*) > 5;
+
+<span class="cm">-- window functions</span>
+SELECT salary, RANK() OVER (ORDER BY salary DESC) rnk FROM employee;
+SELECT id, SUM(amt) OVER (ORDER BY dt) running_total FROM t;
+
+<span class="cm">-- CTE</span>
+WITH high_earners AS (
+  SELECT * FROM employee WHERE salary > 100000
+)
+SELECT * FROM high_earners WHERE dept = 'Eng';
+
+<span class="cm">-- upsert (MySQL)</span>
+INSERT INTO t (id, val) VALUES (1, 'x')
+ON DUPLICATE KEY UPDATE val = VALUES(val);
+
+<span class="cm">-- transactions</span>
+START TRANSACTION;
+...
+COMMIT; / ROLLBACK;</code></pre>`},
+{q:"Python quick reference — strings, lists, dicts",a:`<pre><code><span class="cm"># strings</span>
+s.strip(); s.split(','); ','.join(list_); f"{x:.2f}"
+
+<span class="cm"># list comprehension / filtering</span>
+[x*2 for x in nums if x > 0]
+sorted(items, key=lambda x: x.salary, reverse=True)
+
+<span class="cm"># dict patterns</span>
+d.get(key, default)
+{k: v for k, v in d.items() if v}
+from collections import defaultdict, Counter
+dd = defaultdict(list)
+
+<span class="cm"># unpacking</span>
+first, *rest = items
+a, b = b, a
+
+<span class="cm"># common stdlib</span>
+from functools import lru_cache, reduce
+from itertools import groupby, chain
+from datetime import datetime, timedelta</code></pre>`},
+{q:"Regex cheat sheet",a:`<pre><code>import re
+
+re.match(r'^\\d+$', s)        <span class="cm"># anchored at start</span>
+re.search(r'\\d+', s)         <span class="cm"># find anywhere</span>
+re.findall(r'\\w+@\\w+\\.\\w+', s)  <span class="cm"># all matches</span>
+re.sub(r'\\s+', ' ', s)       <span class="cm"># replace</span>
+
+<span class="cm"># common patterns</span>
+r'^[\\w.-]+@[\\w.-]+\\.\\w+$'   <span class="cm"># email</span>
+r'^\\+?\\d{10,13}$'            <span class="cm"># phone</span>
+r'^\\d{4}-\\d{2}-\\d{2}$'       <span class="cm"># YYYY-MM-DD</span></code></pre>`},
+{q:"Pandas one-liners cheat sheet",a:`<pre><code>df.head(); df.info(); df.describe()
+df[df['salary'] > 50000]
+df.groupby('dept')['salary'].agg(['mean','sum','count'])
+df.sort_values('salary', ascending=False)
+df.pivot_table(values='net_pay', index='dept', columns='month', aggfunc='sum')
+df['month'] = pd.to_datetime(df['date']).dt.month
+df.merge(other, on='employee_id', how='left')
+df.drop_duplicates(subset=['id'], keep='last')
+df.fillna({'bonus': 0})
+df.to_csv('out.csv', index=False)</code></pre>`},
+{q:"FastAPI snippets cheat sheet",a:`<pre><code><span class="cm"># minimal app</span>
+from fastapi import FastAPI, Depends, HTTPException, status
+app = FastAPI(title="HR Service", version="1.0")
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+<span class="cm"># path + query + pydantic body</span>
+@app.post("/departments/{dept_id}/employees", status_code=status.HTTP_201_CREATED)
+def create(dept_id: int, active_only: bool = True, payload: EmployeeIn = ...):
+    ...
+
+<span class="cm"># response_model — controls what's actually serialized back</span>
+@app.get("/employees/{id}", response_model=EmployeeOut)
+def get_employee(id: int):
+    ...
+
+<span class="cm"># dependency with cleanup (yield)</span>
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+<span class="cm"># nested / reusable dependencies</span>
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    ...
+
+def get_current_active_user(user = Depends(get_current_user)):
+    if not user.is_active:
+        raise HTTPException(400, "Inactive user")
+    return user
+
+<span class="cm"># error handling</span>
+raise HTTPException(status_code=404, detail="Employee not found")
+
+@app.exception_handler(ValueError)
+def value_error_handler(request, exc):
+    return JSONResponse(status_code=422, content={"detail": str(exc)})
+
+<span class="cm"># middleware & CORS</span>
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://myhrms.com"],
+    allow_methods=["*"], allow_headers=["*"],
+)
+
+<span class="cm"># background task (lightweight, in-process)</span>
+from fastapi import BackgroundTasks
+@app.post("/notify")
+def notify(bg: BackgroundTasks):
+    bg.add_task(send_email, "hi@example.com")
+    return {"queued": True}
+
+<span class="cm"># router (split large apps into modules)</span>
+from fastapi import APIRouter
+router = APIRouter(prefix="/employees", tags=["employees"])
+
+@router.get("/")
+def list_employees():
+    ...
+app.include_router(router)
+
+<span class="cm"># settings via Pydantic (env-driven config)</span>
+from pydantic_settings import BaseSettings
+class Settings(BaseSettings):
+    database_url: str
+    debug: bool = False
+    class Config:
+        env_file = ".env"
+
+<span class="cm"># run</span>
+uvicorn app.main:app --reload --port 8000
+gunicorn app.main:app -k uvicorn.workers.UvicornWorker -w 4</code></pre>`},
+{q:"Async / await (asyncio) cheat sheet",a:`<pre><code><span class="cm"># basic async function</span>
+async def fetch_data():
+    result = await some_async_call()
+    return result
+
+<span class="cm"># run an async function from sync code (entry point)</span>
+import asyncio
+asyncio.run(fetch_data())
+
+<span class="cm"># run multiple coroutines concurrently</span>
+results = await asyncio.gather(task1(), task2(), task3())
+
+<span class="cm"># fire-and-forget / scheduled concurrently, awaited later</span>
+task = asyncio.create_task(long_running())
+...
+await task
+
+<span class="cm"># timeout guard</span>
+try:
+    await asyncio.wait_for(fetch_data(), timeout=5)
+except asyncio.TimeoutError:
+    ...
+
+<span class="cm"># async context manager</span>
+async with aiohttp.ClientSession() as session:
+    async with session.get(url) as resp:
+        data = await resp.json()
+
+<span class="cm"># async generator / async for</span>
+async def stream_rows():
+    async for row in db_cursor:
+        yield row
+
+<span class="cm"># bridging: run blocking (sync) code from an async function</span>
+loop = asyncio.get_event_loop()
+result = await loop.run_in_executor(None, blocking_function, arg1)
+
+<span class="cm"># common pitfalls</span>
+<span class="cm"># - never call time.sleep() inside async def — use await asyncio.sleep() instead</span>
+<span class="cm"># - a blocking DB/HTTP call inside async def stalls the whole event loop</span>
+<span class="cm"># - forgetting the await keyword silently returns a coroutine object instead of the result</span></code></pre>`},
+{q:"REST API status codes cheat sheet",a:`<pre><code><span class="cm">-- 2xx Success --</span>
+200 OK                    <span class="cm"># standard success, GET/PUT/PATCH</span>
+201 Created                <span class="cm"># POST that created a resource</span>
+202 Accepted               <span class="cm"># request accepted for async processing (e.g. queued a report)</span>
+204 No Content             <span class="cm"># success, nothing to return (DELETE, some PUTs)</span>
+
+<span class="cm">-- 3xx Redirection --</span>
+301 Moved Permanently
+304 Not Modified           <span class="cm"># cache validation (ETag / If-None-Match)</span>
+
+<span class="cm">-- 4xx Client Error --</span>
+400 Bad Request            <span class="cm"># malformed request / failed validation</span>
+401 Unauthorized           <span class="cm"># missing / invalid authentication</span>
+403 Forbidden              <span class="cm"># authenticated, but not allowed (permissions)</span>
+404 Not Found
+405 Method Not Allowed     <span class="cm"># e.g. DELETE on a read-only endpoint</span>
+409 Conflict               <span class="cm"># duplicate resource / version conflict</span>
+415 Unsupported Media Type
+422 Unprocessable Entity   <span class="cm"># syntactically valid but semantically wrong (FastAPI validation)</span>
+429 Too Many Requests      <span class="cm"># rate limit hit — include Retry-After</span>
+
+<span class="cm">-- 5xx Server Error --</span>
+500 Internal Server Error  <span class="cm"># unhandled exception</span>
+502 Bad Gateway            <span class="cm"># upstream service (e.g. payment gateway) returned an invalid response</span>
+503 Service Unavailable    <span class="cm"># server overloaded / in maintenance</span>
+504 Gateway Timeout        <span class="cm"># upstream took too long</span>
+
+<span class="cm">-- 400 vs 401 vs 403, the classic mix-up --</span>
+<span class="cm"># 400: your request itself is malformed</span>
+<span class="cm"># 401: who are you? (no/invalid credentials)</span>
+<span class="cm"># 403: I know who you are, but you can't do this</span></code></pre>`},
+{q:"HTTP methods & REST conventions cheat sheet",a:`<pre><code>GET      /employees          <span class="cm"># list — safe, idempotent, cacheable</span>
+GET      /employees/{id}     <span class="cm"># retrieve one</span>
+POST     /employees          <span class="cm"># create — not idempotent (calling twice creates two)</span>
+PUT      /employees/{id}     <span class="cm"># full replace — idempotent (same call twice = same result)</span>
+PATCH    /employees/{id}     <span class="cm"># partial update — idempotent in practice, not guaranteed by spec</span>
+DELETE   /employees/{id}     <span class="cm"># remove — idempotent (deleting twice is still "deleted")</span>
+
+<span class="cm"># idempotent = safe to retry automatically; POST is the one that isn't</span>
+<span class="cm"># safe methods (no side effects): GET, HEAD, OPTIONS</span>
+
+<span class="cm"># nesting for relationships</span>
+GET /departments/{id}/employees
+
+<span class="cm"># filtering, sorting, pagination via query params</span>
+GET /employees?department=eng&sort=-salary&page=2&page_size=20
+
+<span class="cm"># versioning</span>
+GET /api/v1/employees
+
+<span class="cm"># common headers</span>
+Authorization: Bearer &lt;token&gt;
+Content-Type: application/json
+Idempotency-Key: &lt;uuid&gt;      <span class="cm"># client-supplied, dedupes retried POSTs (e.g. payments)</span></code></pre>`},
+{q:"Django REST Framework quick reference",a:`<pre><code><span class="cm"># serializer</span>
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ['id', 'name', 'department']
+
+    def validate_salary(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Salary can't be negative")
+        return value
+
+<span class="cm"># viewset + router (full CRUD in a few lines)</span>
+class EmployeeViewSet(viewsets.ModelViewSet):
+    queryset = Employee.objects.select_related('department')
+    serializer_class = EmployeeSerializer
+    permission_classes = [IsAuthenticated]
+    filterset_fields = ['department']
+
+router = DefaultRouter()
+router.register('employees', EmployeeViewSet)
+
+<span class="cm"># permissions</span>
+permission_classes = [IsAuthenticated, IsAdminUser]
+
+<span class="cm"># throttling</span>
+DEFAULT_THROTTLE_CLASSES = ['rest_framework.throttling.UserRateThrottle']
+DEFAULT_THROTTLE_RATES = {'user': '100/hour'}
+
+<span class="cm"># pagination</span>
+DEFAULT_PAGINATION_CLASS = 'rest_framework.pagination.PageNumberPagination'
+PAGE_SIZE = 20
+
+<span class="cm"># auth (JWT via simplejwt)</span>
+INSTALLED_APPS += ['rest_framework_simplejwt']
+urlpatterns += [path('api/token/', TokenObtainPairView.as_view())]</code></pre>`},
+{q:"Linux / CI quick commands",a:`<pre><code><span class="cm"># processes & logs</span>
+ps aux | grep gunicorn
+tail -f /var/log/app.log
+journalctl -u myservice -f
+
+<span class="cm"># docker</span>
+docker build -t app:latest .
+docker run -p 8000:8000 --env-file .env app:latest
+docker compose up -d --build
+docker logs -f container_name
+
+<span class="cm"># quick perf checks</span>
+top / htop
+df -h
+netstat -tulpn | grep 8000</code></pre>`}
+];
+
+/* ============================================================
+   RENDER HELPERS
+   ============================================================ */
+let doneState = {}; // in-memory only, per session
+
+function renderQAList(containerId, items, keyPrefix){
+  const el = document.getElementById(containerId);
+  el.innerHTML = items.map((item, i) => {
+    const key = keyPrefix + '-' + i;
+    const lvlBadge = item.lvl ? '<span class="lvl lvl-adv">ADV</span>' : '';
+    return `
+    <div class="qa-item" id="${key}">
+      <div class="qa-q" onclick="toggleQA('${key}')">
+        <div>
+          <span class="qnum">Q${i+1}</span>
+          <span class="qtext">${item.q}${lvlBadge}</span>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:8px;">
+          <div class="done-toggle" onclick="event.stopPropagation(); toggleDone('${key}', '${keyPrefix}')" id="chk-${key}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+      <div class="qa-a"><div class="qa-a-inner">${item.a}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function toggleQA(key){
+  document.getElementById(key).classList.toggle('open');
+}
+
+function toggleDone(key, group){
+  const btn = document.getElementById('chk-' + key);
+  const isDone = btn.classList.toggle('checked');
+  doneState[key] = isDone;
+  updateProgress(group);
+}
+
+function updateProgress(group){
+  const total = document.querySelectorAll(`[id^="${group}-"]`).length;
+  const doneCount = Object.keys(doneState).filter(k => k.startsWith(group + '-') && doneState[k]).length;
+  const pct = total ? Math.round((doneCount/total)*100) : 0;
+  const bar = document.getElementById('progress-' + group);
+  const pctLbl = document.getElementById('progress-' + group + '-pct');
+  if(bar) bar.style.width = pct + '%';
+  if(pctLbl) pctLbl.textContent = pct + '%';
+}
+
+function renderMessages(){
+  const el = document.getElementById('list-messages');
+  el.innerHTML = messages.map((m,i) => `
+    <div class="msg-card">
+      <div class="msg-head">
+        <div>
+          <div class="msg-title">${m.title}</div>
+          <div class="msg-sub">${m.sub}</div>
+        </div>
+      </div>
+      <div class="msg-body" id="msg-body-${i}">${m.body}</div>
+      <div class="msg-foot">
+        <button class="copy-btn" onclick="copyMessage(this, ${i})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          <span>Copy message</span>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function copyMessage(btn, i){
+  const text = messages[i].body;
+  copyToClipboard(text).then(() => {
+    const span = btn.querySelector('span');
+    const original = span.textContent;
+    span.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { span.textContent = original; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function copyText(el, text){
+  copyToClipboard(text).then(() => {
+    const span = el.querySelector('span');
+    const original = span.textContent;
+    span.textContent = 'Copied!';
+    setTimeout(() => { span.textContent = original; }, 1500);
+  });
+}
+
+function copyToClipboard(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  }
+  return fallbackCopy(text);
+}
+function fallbackCopy(text){
+  return new Promise((resolve) => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+    resolve();
+  });
+}
+
+/* ---- Technical topic pills ---- */
+const techTopics = [
+  {key:'python', label:'Python'},
+  {key:'django', label:'Django'},
+  {key:'fastapi', label:'FastAPI'},
+  {key:'redis', label:'Redis & Celery'},
+  {key:'sql', label:'SQL'},
+  {key:'pandas', label:'NumPy / Pandas'},
+  {key:'git', label:'Git'},
+  {key:'cicd', label:'CI/CD'},
+  {key:'sysdesign', label:'System Design'},
+  {key:'deepdive', label:'Resume Deep-Dive'},
+  {key:'coding', label:'Coding Qs'},
+  {key:'optimization', label:'Optimization'},
+  {key:'cheatsheet', label:'Cheat Sheets'}
+];
+let currentTech = 'python';
+
+function renderTechPills(){
+  const el = document.getElementById('techPills');
+  el.innerHTML = techTopics.map(t => `<button class="pill ${t.key===currentTech?'active':''}" data-k="${t.key}">${t.label}</button>`).join('');
+  el.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      currentTech = p.dataset.k;
+      renderTechPills();
+      renderTechList();
+    });
+  });
+}
+
+function renderTechList(){
+  let items;
+  if(currentTech === 'coding') items = codingQuestions;
+  else if(currentTech === 'sysdesign') items = sysdesign;
+  else if(currentTech === 'deepdive') items = deepdive;
+  else if(currentTech === 'fastapi') items = fastapi;
+  else if(currentTech === 'optimization') items = optimization;
+  else if(currentTech === 'cheatsheet') items = cheatsheet;
+  else items = technical[currentTech];
+  renderQAList('list-technical', items, 'technical');
+  updateProgress('technical');
+}
+
+/* ============================================================
+   INIT / NAV
+   ============================================================ */
+function setIntro(v){
+  document.querySelectorAll('#introSeg button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+  document.getElementById('introText').innerHTML = introVersions[v];
+  document.getElementById('introKeypoints').innerHTML = introKeypoints[v].map(k => `<li>${k}</li>`).join('');
+}
+
+document.getElementById('introSeg').addEventListener('click', (e) => {
+  if(e.target.tagName === 'BUTTON') setIntro(e.target.dataset.v);
+});
+
+const topMeta = {
+  home: {eyebrow:"INTERVIEW PREP · RAKESH ROY", title:"Ready when you are", sub:"Python / Django Backend Engineer — everything you need in one place."},
+  behavioral: {eyebrow:"BEHAVIORAL", title:"Behavioral questions", sub:"Grounded in your actual projects — tap to expand, use STAR where marked."},
+  situational: {eyebrow:"SITUATIONAL", title:"Scenario questions", sub:"How you'd handle real on-the-job and system-design situations."},
+  messages: {eyebrow:"OUTREACH", title:"Sample messages", sub:"Tap copy, paste into LinkedIn or Gmail, then personalize the [brackets]."},
+  technical: {eyebrow:"TECHNICAL", title:"Technical & advanced", sub:"Python, Django, FastAPI, Redis/Celery, SQL, Pandas, Git, CI/CD, System Design, Deep-Dives, Optimization & Cheat Sheets."}
+};
+
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.screen === name));
+  const meta = topMeta[name];
+  document.getElementById('topEyebrow').textContent = meta.eyebrow;
+  document.getElementById('topTitle').textContent = meta.title;
+  document.getElementById('topSub').textContent = meta.sub;
+  window.scrollTo({top:0, behavior:'instant'});
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => showScreen(btn.dataset.screen));
+});
+
+/* Initial render */
+setIntro('30');
+renderQAList('list-behavioral', behavioralQA, 'behavioral');
+renderQAList('list-situational', situationalQA, 'situational');
+renderMessages();
+renderTechPills();
+renderTechList();
+</script>
+</body>
+</html>
