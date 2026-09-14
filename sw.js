@@ -1,4 +1,4 @@
-const CACHE_NAME = "interview-prep-v2";
+const CACHE_NAME = "interview-prep-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -26,8 +26,6 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Cache-first for same-origin assets, network fallback with cache update.
-// Google Fonts requests just pass through to the network.
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
@@ -36,6 +34,23 @@ self.addEventListener("fetch", (event) => {
     return; // let the browser handle font loading/caching itself
   }
 
+  // Page navigations and index.html: network-first, so edits always show up
+  // immediately when online. Falls back to the cached copy only when offline.
+  const isPageRequest = req.mode === "navigate" || req.url.endsWith("/index.html") || req.url.endsWith("/");
+  if (isPageRequest) {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+          return res;
+        })
+        .catch(() => caches.match(req).then((cached) => cached || caches.match("./index.html")))
+    );
+    return;
+  }
+
+  // Static assets (icons, manifest): cache-first is fine, they rarely change.
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
