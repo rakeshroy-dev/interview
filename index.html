@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Rakesh Roy — Interview Prep</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A0E14">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Interview Prep">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1777,6 +1788,144 @@ cicd: [
 ]
 };
 
+/* ---- AWS & Deployment questions (own pill) ---- */
+const aws = [
+{q:"How honest should you be about limited AWS experience, and how do you frame it?",a:`<ul>
+<li>Be upfront and specific rather than vague: "I've used EC2 and S3 hands-on for deployment — launching/configuring instances, security groups, and serving static/media files from S3 — but I haven't owned deeper infra like VPC design, auto-scaling, or IAM policy architecture end-to-end."</li>
+<li>Immediately pivot to what you do know well and that transfers: Linux/Nginx/Gunicorn, Docker, CI/CD pipelines, and the "why" behind cloud services (stateless app servers, offloading static assets, managed DB reliability) — this shows judgment even where hands-on depth is shallower.</li>
+<li>Never bluff on a follow-up you can't answer — say what you'd check/read up on. Interviewers weight honesty + reasoning highly over rote cloud trivia for a backend-focused role.</li>
+</ul>`},
+{q:"EC2 vs a managed platform (Elastic Beanstalk / ECS) — what's the trade-off?",a:`<ul>
+<li>EC2: raw virtual machines — full control over the OS, install anything (Nginx, Gunicorn, Docker), but you own patching, scaling, and process management yourself.</li>
+<li>Managed platforms (Beanstalk/ECS/App Runner): less operational burden — they handle scaling and health checks — at the cost of some flexibility and a steeper learning curve for their abstractions.</li>
+<li>A small team without dedicated DevOps often starts on EC2 + Docker + Nginx/Gunicorn (direct control, easier to debug) and migrates to a managed/container platform once scaling or team size justifies the overhead.</li>
+</ul>`},
+{q:"How do you deploy a Django app on EC2 in practice — what's the request path?",a:`<ul>
+<li>Client → Nginx (reverse proxy, serves static files, terminates SSL) → Gunicorn (WSGI application server, runs multiple worker processes) → Django app.</li>
+<li>Gunicorn is managed as a systemd service (or inside a Docker container) so it restarts automatically on crash/reboot.</li>
+<li>Environment variables (DB credentials, secret key) are kept out of code via a <code>.env</code> file or the instance's environment, never committed to Git.</li>
+</ul>`},
+{q:"What is S3 used for in a typical Django deployment, and why not just store files on the EC2 instance?",a:`<ul>
+<li>S3 stores user-uploaded media (and optionally static files) as object storage — durable, versioned, and independent of any single server's disk.</li>
+<li>If files sit on the EC2 instance's local disk, they're lost on instance replacement/scaling and can't be shared across multiple app servers behind a load balancer.</li>
+<li>Django integrates via <code>django-storages</code> with the S3 backend, so <code>FileField</code>/<code>ImageField</code> uploads transparently go to a bucket instead of local disk.</li>
+</ul>`},
+{q:"What are EC2 security groups, and how do you think about them?",a:`<ul>
+<li>A security group is a virtual firewall attached to an instance — a set of inbound/outbound rules by port, protocol, and source IP/CIDR.</li>
+<li>Practical rule of thumb: only open the ports actually needed (443/80 for web traffic, 22 for SSH restricted to a known IP range) — never open the DB port to the public internet.</li>
+<li>App servers and the database typically sit in different security groups, with the DB group only accepting traffic from the app server group, not from the internet.</li>
+</ul>`},
+{q:"RDS vs running MySQL yourself on EC2 — what's the trade-off?",a:`<ul>
+<li>RDS (managed): automated backups, patching, and read replicas/multi-AZ failover handled by AWS — less operational work, some cost premium and a bit less low-level control.</li>
+<li>Self-managed MySQL on EC2: full control over configuration/tuning, but you own backup scheduling, patching, and failover design yourself.</li>
+<li>For a production HRMS handling payroll data, RDS's automated backups and point-in-time recovery are usually worth the trade-off over self-managing it.</li>
+</ul>`, lvl:1},
+{q:"What is IAM, at a level you'd need to explain it in an interview?",a:`<ul>
+<li>IAM (Identity and Access Management) controls who/what can do what across AWS resources — users, roles, and policies (JSON documents describing allowed actions on specific resources).</li>
+<li>Principle of least privilege: an app server's IAM role should only have the specific permissions it needs (e.g. write access to one S3 bucket), not broad admin access.</li>
+<li>Roles (attached to an EC2 instance) are preferred over hardcoding access keys in code — the instance can call AWS APIs (e.g. S3) without any credentials stored in the app.</li>
+</ul>`, lvl:1},
+{q:"How would you approach zero/low-downtime deployment on EC2 without a full container orchestrator?",a:`<ul>
+<li>Simplest version: deploy behind a load balancer with 2+ instances, deploy to one at a time (rolling), health-check before shifting traffic — this is the basic idea behind blue-green even without ECS/Kubernetes.</li>
+<li>Pair it with the zero-downtime migration pattern already covered (additive schema changes first, backfill, then remove old columns later) so the old and new app versions can both run briefly during rollout.</li>
+</ul>`, lvl:1},
+{q:"What would you want to learn next to close the gap on AWS, if asked directly?",a:`<ul>
+<li>A good honest answer: "VPC networking fundamentals (subnets, routing between public/private), auto-scaling groups with load balancers, and IAM policy design in more depth — I've used the pieces individually but want to architect them together from scratch."</li>
+<li>This shows self-awareness and a concrete learning direction rather than a defensive non-answer.</li>
+</ul>`}
+];
+
+/* ---- Testing & Mocking questions (own pill) ---- */
+const testing = [
+{q:"How do you structure tests for a Django app — what are the layers?",a:`<ul>
+<li>Unit tests: model methods, serializer validation, utility functions — no DB or minimal DB, fast and isolated.</li>
+<li>Integration tests: DRF <code>APIClient</code> hitting real view/URL routing with a test DB, checking status codes and response shape end-to-end.</li>
+<li>Celery task tests: run tasks synchronously in tests (<code>CELERY_TASK_ALWAYS_EAGER=True</code>) to assert side effects without a real broker.</li>
+</ul>`},
+{q:"unittest vs pytest — why would you pick pytest-django?",a:`<ul>
+<li><code>unittest</code> (Django's built-in <code>TestCase</code>): class-based, verbose assertions (<code>assertEqual</code>), wraps each test in a transaction that's rolled back.</li>
+<li><code>pytest-django</code>: plain functions, plain <code>assert</code> statements, powerful fixtures (<code>@pytest.fixture</code>) and parametrization (<code>@pytest.mark.parametrize</code>) to run the same test with many inputs concisely.</li>
+<li>Parametrization is the biggest practical win for payroll-style logic — one test function can cover many salary/grade/TDS-slab combinations instead of duplicating near-identical test methods.</li>
+</ul>`},
+{q:"What's the difference between a mock and a stub, and when do you reach for unittest.mock?",a:`<ul>
+<li>Stub: a fake object that returns canned data — used just to make a test runnable.</li>
+<li>Mock: a stub that also records how it was called, so you can assert it was called with the right arguments the right number of times.</li>
+<li>Reach for <code>unittest.mock.patch</code> to isolate a unit test from a slow/external dependency — e.g. mocking a payment gateway (Payphi) call or an outbound email/SMS send so tests run fast and don't hit real third parties.</li>
+</ul>
+<pre><code><span class="kw">from</span> unittest.mock <span class="kw">import</span> patch
+
+@patch("payroll.services.payphi_client.charge")
+<span class="kw">def</span> test_payment_failure_does_not_mark_paid(mock_charge):
+    mock_charge.side_effect = PaymentGatewayError("timeout")
+    result = process_payment(invoice)
+    assert result.status == "failed"
+    mock_charge.assert_called_once()</code></pre>`, lvl:1},
+{q:"How do you test a DRF API endpoint end-to-end?",a:`<ul>
+<li>Use <code>rest_framework.test.APIClient</code> to send real HTTP-like requests through the actual URL routing and view/serializer stack against a test database.</li>
+<li>Assert on status code, response payload shape, and any side effects (e.g. a row was created, a Celery task was queued).</li>
+</ul>
+<pre><code><span class="kw">from</span> rest_framework.test <span class="kw">import</span> APIClient
+
+<span class="kw">def</span> test_leave_request_creates_pending_approval():
+    client = APIClient()
+    client.force_authenticate(user=employee_user)
+    resp = client.post("/api/leave-requests/", {"start": "2026-01-05", "days": 2})
+    assert resp.status_code == 201
+    assert resp.data["status"] == "pending"</code></pre>`},
+{q:"What are fixtures/factories, and why prefer factory_boy over Django fixtures (JSON)?",a:`<ul>
+<li>JSON fixtures are static snapshots — brittle when the schema changes, and hard to read/maintain as data grows.</li>
+<li><code>factory_boy</code> factories build model instances in code with sensible defaults, letting each test override only the fields it cares about — much easier to keep in sync with the model.</li>
+</ul>
+<pre><code><span class="kw">class</span> EmployeeFactory(factory.django.DjangoModelFactory):
+    <span class="kw">class</span> Meta:
+        model = Employee
+    name = factory.Faker("name")
+    department = factory.SubFactory(DepartmentFactory)
+    salary = 50000</code></pre>`},
+{q:"How do you test Celery tasks without needing a real broker running?",a:`<ul>
+<li>Set <code>CELERY_TASK_ALWAYS_EAGER=True</code> in the test settings so <code>.delay()</code> runs the task synchronously in-process instead of going through Redis/RabbitMQ.</li>
+<li>Assert on the task's side effect directly (e.g. a report row was created, a status flag flipped) rather than trying to inspect the broker.</li>
+<li>For retry logic specifically, call the task function directly and assert it raises/retries as expected, since eager mode changes some retry semantics.</li>
+</ul>`, lvl:1},
+{q:"What is test coverage, and what's a healthy way to use it (vs chasing a number)?",a:`<ul>
+<li>Coverage measures which lines/branches executed during tests — it tells you what's untested, not whether what's tested is meaningful.</li>
+<li>Chasing 100% coverage encourages weak tests that execute code without asserting real behavior; better to prioritize coverage on business-critical paths (payroll calculation, TDS slabs, approval workflows) over boilerplate.</li>
+<li>Use it as a diagnostic to find untested critical paths, not as a target metric in itself.</li>
+</ul>`},
+{q:"How would you test a function that depends on \"today's date\" (e.g. a payroll cutoff check)?",a:`<ul>
+<li>Never call <code>date.today()</code>/<code>timezone.now()</code> deep inside business logic without a seam — pass the date in as a parameter, or patch it in the test.</li>
+<li><code>freezegun</code>'s <code>@freeze_time("2026-01-31")</code> is a common way to pin "now" for a test so cutoff-boundary logic (last day of month, financial year-end) is deterministic and repeatable.</li>
+</ul>`}
+];
+
+/* ---- React.js basics (own pill — resume-listed skill) ---- */
+const reactBasics = [
+{q:"How would you describe your React experience honestly in an interview?",a:`<ul>
+<li>Frame it accurately relative to backend depth: "I've used React for smaller internal dashboards/UI pieces — components, hooks, calling our DRF APIs — but my primary depth is backend; I wouldn't claim senior front-end architecture experience."</li>
+<li>Then pivot to what's genuinely strong: you understand the contract between frontend and backend well (API design, serialization shape, error formats) because you've built both sides.</li>
+</ul>`},
+{q:"useState vs useEffect — what does each do?",a:`<ul>
+<li><code>useState</code>: holds local component state that persists across re-renders and triggers a re-render when updated.</li>
+<li><code>useEffect</code>: runs side effects (API calls, subscriptions) after render, with a dependency array controlling when it re-runs — e.g. fetching data when an ID prop changes.</li>
+</ul>
+<pre><code><span class="kw">const</span> [employees, setEmployees] = useState([]);
+
+useEffect(() => {
+  fetch("/api/employees/")
+    .then(res => res.json())
+    .then(data => setEmployees(data));
+}, []); <span class="cm">// empty deps: run once on mount</span></code></pre>`},
+{q:"How does a React app typically talk to a Django REST Framework backend?",a:`<ul>
+<li>React calls DRF endpoints over HTTP (fetch/axios), sending a token/JWT in the <code>Authorization</code> header for authenticated requests.</li>
+<li>CORS needs to be configured on the Django side (<code>django-cors-headers</code>) during local development when frontend and backend run on different ports/origins.</li>
+</ul>`},
+{q:"Controlled vs uncontrolled components in a form — which do you default to and why?",a:`<ul>
+<li>Controlled: the input's value is driven by React state (<code>value</code> + <code>onChange</code>) — the source of truth is React, easy to validate/transform on every keystroke.</li>
+<li>Uncontrolled: the DOM holds the value, read via a ref only when needed (e.g. on submit) — simpler for basic forms but harder to validate live.</li>
+<li>Default to controlled for anything needing live validation (e.g. a salary/date field with format rules) since that matches typical DRF-backed form patterns.</li>
+</ul>`}
+];
+
 /* ---- System Design questions (own pill) ---- */
 const sysdesign = [
 {q:"Design a multi-tenant HRMS/payroll platform serving 50+ organizations.",a:`<span class="tag-sys">SYSTEM DESIGN</span>
@@ -2674,6 +2823,9 @@ const techTopics = [
   {key:'pandas', label:'NumPy / Pandas'},
   {key:'git', label:'Git'},
   {key:'cicd', label:'CI/CD'},
+  {key:'aws', label:'AWS & Deployment'},
+  {key:'testing', label:'Testing & Mocking'},
+  {key:'react', label:'React.js'},
   {key:'sysdesign', label:'System Design'},
   {key:'deepdive', label:'Resume Deep-Dive'},
   {key:'coding', label:'Coding Qs'},
@@ -2702,6 +2854,9 @@ function renderTechList(){
   else if(currentTech === 'fastapi') items = fastapi;
   else if(currentTech === 'optimization') items = optimization;
   else if(currentTech === 'cheatsheet') items = cheatsheet;
+  else if(currentTech === 'aws') items = aws;
+  else if(currentTech === 'testing') items = testing;
+  else if(currentTech === 'react') items = reactBasics;
   else items = technical[currentTech];
   renderQAList('list-technical', items, 'technical');
   updateProgress('technical');
@@ -2750,6 +2905,13 @@ renderQAList('list-situational', situationalQA, 'situational');
 renderMessages();
 renderTechPills();
 renderTechList();
+
+/* ---- PWA: register service worker ---- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
 </script>
 </body>
 </html>
