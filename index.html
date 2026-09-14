@@ -2741,7 +2741,11 @@ function toggleQA(key){
   container.querySelectorAll('.qa-item.open').forEach(item => {
     if(item !== el) item.classList.remove('open');
   });
-  el.classList.toggle('open', !isOpen);
+  const nowOpen = !isOpen;
+  el.classList.toggle('open', nowOpen);
+  const openQA = loadState().openQA || {};
+  openQA[container.id] = nowOpen ? key : null;
+  saveState({openQA});
 }
 
 function toggleDone(key, group){
@@ -2846,6 +2850,7 @@ function renderTechPills(){
   el.querySelectorAll('.pill').forEach(p => {
     p.addEventListener('click', () => {
       currentTech = p.dataset.k;
+      saveState({currentTech});
       renderTechPills();
       renderTechList();
     });
@@ -2889,7 +2894,8 @@ const topMeta = {
   technical: {eyebrow:"TECHNICAL", title:"Technical & advanced", sub:"Python, Django, FastAPI, Redis/Celery, SQL, Pandas, Git, CI/CD, System Design, Deep-Dives, Optimization & Cheat Sheets."}
 };
 
-function showScreen(name){
+function showScreen(name, opts){
+  opts = opts || {};
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.screen === name));
@@ -2897,20 +2903,83 @@ function showScreen(name){
   document.getElementById('topEyebrow').textContent = meta.eyebrow;
   document.getElementById('topTitle').textContent = meta.title;
   document.getElementById('topSub').textContent = meta.sub;
-  window.scrollTo({top:0, behavior:'instant'});
+  currentScreenName = name;
+  saveState({screen: name});
+  if(!opts.preserveScroll){
+    window.scrollTo({top:0, behavior:'instant'});
+  }
 }
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => showScreen(btn.dataset.screen));
 });
 
+/* ---- Persisted state: tab, scroll position, open question ---- */
+const STORAGE_KEY = 'interviewPrepState';
+let currentScreenName = 'home';
+let scrollSaveTimer = null;
+
+function loadState(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  }catch(e){
+    return {};
+  }
+}
+
+function saveState(patch){
+  try{
+    const merged = Object.assign(loadState(), patch);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+  }catch(e){ /* storage unavailable — fail silently */ }
+}
+
+function persistScroll(){
+  const scrollY = loadState().scrollY || {};
+  scrollY[currentScreenName] = window.scrollY;
+  saveState({scrollY});
+}
+
+window.addEventListener('scroll', () => {
+  if(scrollSaveTimer) return;
+  scrollSaveTimer = setTimeout(() => { scrollSaveTimer = null; persistScroll(); }, 200);
+});
+window.addEventListener('beforeunload', persistScroll);
+
 /* Initial render */
+const savedState = loadState();
+
 setIntro('30');
 renderQAList('list-behavioral', behavioralQA, 'behavioral');
 renderQAList('list-situational', situationalQA, 'situational');
 renderMessages();
+
+if(savedState.currentTech && techTopics.some(t => t.key === savedState.currentTech)){
+  currentTech = savedState.currentTech;
+}
 renderTechPills();
 renderTechList();
+
+/* Reopen the question that was open before refresh (no auto-collapse on init) */
+if(savedState.openQA){
+  Object.keys(savedState.openQA).forEach(containerId => {
+    const key = savedState.openQA[containerId];
+    if(!key) return;
+    const item = document.getElementById(key);
+    if(item && item.parentElement && item.parentElement.id === containerId){
+      item.classList.add('open');
+    }
+  });
+}
+
+/* Restore last tab, then last scroll position on that tab */
+const restoredScreen = (savedState.screen && topMeta[savedState.screen]) ? savedState.screen : 'home';
+showScreen(restoredScreen, {preserveScroll:true});
+if(savedState.scrollY && typeof savedState.scrollY[restoredScreen] === 'number'){
+  requestAnimationFrame(() => {
+    window.scrollTo({top: savedState.scrollY[restoredScreen], behavior:'instant'});
+  });
+}
 
 /* ---- PWA: register service worker ---- */
 if ('serviceWorker' in navigator) {
