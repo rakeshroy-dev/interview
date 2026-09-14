@@ -1,4 +1,4 @@
-const CACHE_NAME = "interview-prep-v1";
+const CACHE_NAME = "interview-prep-v2";
 const ASSETS = [
   "./",
   "./index.html",

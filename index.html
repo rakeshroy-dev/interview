@@ -2735,7 +2735,13 @@ function renderQAList(containerId, items, keyPrefix){
 }
 
 function toggleQA(key){
-  document.getElementById(key).classList.toggle('open');
+  const el = document.getElementById(key);
+  const isOpen = el.classList.contains('open');
+  const container = el.parentElement;
+  container.querySelectorAll('.qa-item.open').forEach(item => {
+    if(item !== el) item.classList.remove('open');
+  });
+  el.classList.toggle('open', !isOpen);
 }
 
 function toggleDone(key, group){
